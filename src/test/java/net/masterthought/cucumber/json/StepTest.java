@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import net.masterthought.cucumber.generators.integrations.PageTest;
 import net.masterthought.cucumber.json.support.Status;
 
@@ -61,29 +59,16 @@ public class StepTest extends PageTest {
     }
 
     @Test
-    public void getKeyword_ReturnsNull() {
-
-        // given
-        Step step = new Step();
-
-        // when
-        String keyword = step.getKeyword();
-
-        // then
-        assertThat(keyword).isEqualTo(null);
-    }
-
-    @Test
     public void getOutput_ReturnsOutput() {
 
         // given
         Step step = features.get(1).getElements()[0].getSteps()[7];
 
         // when
-        Output[] outputs = step.getOutputs();
+        Output output = step.getOutput();
 
         // then
-        assertThat(getMessages(outputs)).containsOnlyOnce(
+        assertThat(output.getMessages()).containsOnlyOnce(
                 "Could not connect to the server @Rocky@",
                 "Could not connect to the server @Mike@");
     }
@@ -125,7 +110,14 @@ public class StepTest extends PageTest {
         Result result = step.getResult();
 
         // then
-        assertThat(result.getErrorMessage()).contains("java.lang.AssertionError");
+        assertThat(result.getErrorMessage()).isEqualTo("java.lang.AssertionError: \n" +
+                "Expected: is <80>\n" +
+                "     got: <90>\n" +
+                "\n" +
+                "\tat org.junit.Assert.assertThat(Assert.java:780)\n" +
+                "\tat org.junit.Assert.assertThat(Assert.java:738)\n" +
+                "\tat net.masterthought.example.ATMScenario.checkBalance(ATMScenario.java:69)\n" +
+                "\tat ✽.And the account balance should be 90(net/masterthought/example/ATMK.feature:12)\n");
     }
 
     @Test
@@ -165,110 +157,5 @@ public class StepTest extends PageTest {
 
         // then
         assertThat(duration).isZero();
-    }
-
-    @Test
-    public void getResult_OnMissingResult_ReturnsEmptyResult() {
-
-        // given
-        Step step = features.get(1).getElements()[2].getSteps()[0];
-
-        // when
-        Result result = step.getResult();
-
-        // then
-        assertThat(result.getStatus()).isEqualTo(Status.UNDEFINED);
-        assertThat(result.getDuration()).isEqualTo(0L);
-        assertThat(result.getErrorMessage()).isNull();
-    }
-
-    @Test
-    public void getLine_ReturnLineNumber() {
-        Step step = features.get(0).getElements()[0].getSteps()[0];
-        assertNotNull(step.getLine());
-    }
-
-    @Test
-    public void getId_ReturnCompositeId() {
-        Step step = features.get(0).getElements()[0].getSteps()[0];
-        assertEquals("0-step-8", step.getId());
-    }
-
-    @Test
-    public void setId_NewCompositeId() {
-        Step step = features.get(0).getElements()[0].getSteps()[0];
-        String newId = "puppies";
-        step.setId(newId);
-        assertEquals(newId, step.getId());
-    }
-
-    @Test
-    public void generateId_ReturnGeneratedId() {
-        Element parentElement = features.get(0).getElements()[0];
-        Step step = parentElement.getSteps()[0];
-        assertEquals("0-step-8", step.generateId(parentElement));
-    }
-
-    @Test
-    public void getResultableName_ReturnResultableName() {
-        Step step = features.get(0).getElements()[0].getSteps()[0];
-        assertEquals("I have a new credit card", step.getResultableName());
-    }
-
-    @Test
-    public void hashCode_ReturnHashCode() throws Exception {
-        Step step = this.features.get(1).getElements()[0].getSteps()[0];
-        assertEquals(1085087885, step.hashCode());
-    }
-
-    @Test
-    public void equals_ReturnTrueSameInstance() throws Exception {
-        Step step1 = this.features.get(1).getElements()[0].getSteps()[0];
-        Step step2 = this.features.get(1).getElements()[0].getSteps()[0];
-        assertTrue(step1.equals(step2));
-    }
-
-    @Test
-    public void equals_ReturnTrueSameValue() throws Exception {
-        Step step1 = this.features.get(1).getElements()[0].getSteps()[0];
-
-        Step step2 = new Step();
-        step2.setId("0-step-7");
-        TestUtils.setFieldViaReflection("name", "the account balance is 100", step2);
-        TestUtils.setFieldViaReflection("keyword","Given ", step2);
-        Result result = new Result();
-        TestUtils.setFieldViaReflection("status", Status.UNDEFINED, result);
-        TestUtils.setFieldViaReflection("duration", 0L, result);
-        TestUtils.setFieldViaReflection("result", result, step2);
-        Match match = new Match();
-        TestUtils.setFieldViaReflection("match", match, step2);
-        TestUtils.setFieldViaReflection("line", 7 , step2);
-
-        assertTrue(step1.equals(step2));
-    }
-
-    @Test
-    public void equals_ReturnFalseNotSameValue() throws Exception {
-        Step step1 = this.features.get(1).getElements()[0].getSteps()[0];
-
-        Step step2 = new Step();
-        step2.setId("0-step-9999");
-        TestUtils.setFieldViaReflection("name", "the account balance is 1,000,000", step2);
-        TestUtils.setFieldViaReflection("keyword","And ", step2);
-        Result result = new Result();
-        TestUtils.setFieldViaReflection("status", Status.PENDING, result);
-        TestUtils.setFieldViaReflection("duration", 9999L, result);
-        TestUtils.setFieldViaReflection("result", result, step2);
-        Match match = new Match();
-        TestUtils.setFieldViaReflection("match", match, step2);
-        TestUtils.setFieldViaReflection("line", 7 , step2);
-
-        assertFalse(step1.equals(step2));
-    }
-
-    @Test
-    public void equals_ReturnFalseNotAnInstanceOf() throws Exception {
-        Step step = this.features.get(1).getElements()[0].getSteps()[0];
-        assertFalse(step.equals(new Hook()));
     }
 }

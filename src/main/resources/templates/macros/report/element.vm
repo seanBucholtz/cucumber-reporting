@@ -3,17 +3,15 @@
 <div class="element">
   #if ($linkToFeature)
     <div class="indention">
-      <b>Feature:</b>
-      <a href="$element.getFeature().getReportFileName()">$element.getFeature().getName()</a>
+      <a href="$element.getFeature().getReportFileName()">View Feature</a> <i>$element.getFeature().getName()</i>
     </div>
   #end
 
   #includeTags($element.getTags())
-  #includeDuration($element)
 
   #set($elementId = $counter.next())
   <span data-toggle="collapse" class="#if ($element.getStatus().isPassed()) collapsed #end collapsable-control" data-target="#element-$elementId">
-    #includeBrief($element.getKeyword(), $element.getStatus(), $element.getName(), true)
+    #includeBrief($element.getKeyword(), $element.getStatus(), $element.getEscapedName(), true)
   </span>
   <div class="description indention">$element.getDescription()</div>
 

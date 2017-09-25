@@ -6,6 +6,6 @@ package net.masterthought.cucumber.generators.integrations.helpers;
 public class HeadAssertion extends ReportAssertion {
 
     public String getTitle() {
-        return firstBySelector("title", WebAssertion.class).text();
+        return oneBySelector("title", WebAssertion.class).text();
     }
 }

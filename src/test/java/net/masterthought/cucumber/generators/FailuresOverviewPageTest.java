@@ -37,7 +37,7 @@ public class FailuresOverviewPageTest extends PageTest {
     }
 
     @Test
-    public void prepareReport_AddsCustomProperties() {
+    public void prepareReportAddsCustomProperties() {
 
         // given
         page = new FailuresOverviewPage(reportResult, configuration);
@@ -45,9 +45,8 @@ public class FailuresOverviewPageTest extends PageTest {
         // a list to compare
         List<Element> failures = new ArrayList<>();
         for (Feature feature : features) {
-            if (feature.getStatus().isPassed()) {
+            if (feature.getStatus().isPassed())
                 continue;
-            }
 
             for (Element element : feature.getElements()) {
                 if (element.getStepsStatus().isPassed())
@@ -62,7 +61,7 @@ public class FailuresOverviewPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(8);
+        assertThat(context.getKeys()).hasSize(9);
 
         List<Element> elements = (List<Element>) context.get("failures");
         assertThat(elements).hasSameElementsAs(failures);

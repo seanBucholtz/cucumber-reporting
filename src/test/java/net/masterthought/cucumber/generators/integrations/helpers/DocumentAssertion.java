@@ -12,7 +12,7 @@ public class DocumentAssertion extends ReportAssertion {
     }
 
     public HeadAssertion getHead() {
-        return firstBySelector("head", HeadAssertion.class);
+        return oneBySelector("head", HeadAssertion.class);
     }
 
     public NavigationAssertion getNavigation() {
@@ -27,12 +27,8 @@ public class DocumentAssertion extends ReportAssertion {
         return byId("build-info", BuildInfoAssertion.class);
     }
 
-    public TableRowAssertion[] getClassifications() {
-        return byId("classifications", WebAssertion.class).allBySelector("tbody tr", TableRowAssertion.class);
-    }
-
-    public SummaryAssertion getReport() {
-        return byId("report", SummaryAssertion.class);
+    public SummaryAssertion getSummary() {
+        return byId("summary", SummaryAssertion.class);
     }
 
     public FeatureAssertion getFeature() {

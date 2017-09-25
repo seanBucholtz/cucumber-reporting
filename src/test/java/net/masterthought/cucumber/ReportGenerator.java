@@ -9,7 +9,6 @@ import java.util.List;
 import net.masterthought.cucumber.json.Feature;
 import net.masterthought.cucumber.json.support.StepObject;
 import net.masterthought.cucumber.json.support.TagObject;
-import net.masterthought.cucumber.sorting.SortingMethod;
 
 /**
  * @author Damian Szczepanik (damianszczepanik@github)
@@ -23,8 +22,6 @@ public abstract class ReportGenerator {
     protected static final String EMPTY_JSON = "empty.json";
     protected static final String INVALID_JSON = "invalid.json";
     protected static final String INVALID_REPORT_JSON = "invalid-report.json";
-
-    protected static final File TRENDS_FILE = new File(pathToSampleFile("cucumber-trends.json"));
 
     private final File reportDirectory;
 
@@ -62,17 +59,12 @@ public abstract class ReportGenerator {
         if (configuration == null) {
             configuration = new Configuration(reportDirectory, projectName);
         }
-        configuration.setSortingMethod(SortingMethod.ALPHABETICAL);
         createEmbeddingsDirectory();
     }
 
     public static String reportFromResource(String jsonReport) {
-        return pathToSampleFile(JSON_DIRECTORY + jsonReport);
-    }
-
-    protected static String pathToSampleFile(String fileName) {
         try {
-            URL path = ReportGenerator.class.getClassLoader().getResource(fileName);
+            URL path = ReportGenerator.class.getClassLoader().getResource(JSON_DIRECTORY + jsonReport);
             return new File(path.toURI()).getAbsolutePath();
         } catch (URISyntaxException e) {
             throw new ValidationException(e);
@@ -83,7 +75,7 @@ public abstract class ReportGenerator {
         ReportParser reportParser = new ReportParser(configuration);
 
         List<Feature> featuresFromJson = reportParser.parseJsonFiles(jsonReports);
-        reportResult = new ReportResult(featuresFromJson, configuration.getSortingMethod());
+        reportResult = new ReportResult(featuresFromJson);
 
         features = reportResult.getAllFeatures();
         tags = reportResult.getAllTags();

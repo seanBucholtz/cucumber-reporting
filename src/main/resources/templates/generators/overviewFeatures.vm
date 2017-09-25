@@ -5,9 +5,9 @@
   #includeTitle("Features Overview")
 
   <script type="text/javascript">
-  #parse("/templates/js/steps-chart.js.vm")
-  #parse("/templates/js/scenarios-chart.js.vm")
-  #parse("/templates/js/features-chart.js.vm")
+  #parse("/templates/js/steps-chart.js")
+  #parse("/templates/js/scenarios-chart.js")
+  #parse("/templates/js/features-chart.js")
   </script>
 </head>
 
@@ -15,7 +15,7 @@
 
 #includeNavigation("features")
 
-#includeReportInfo(true)
+#includeBuildInfo()
 
 #includeLead("Features Statistics", "The following graphs show passing and failing statistics for features")
 
@@ -48,7 +48,7 @@
           </div>
 
           <!-- Left and right controls -->
-          <a class="left carousel-control" href="#featureChartCarousel" role="button" data-slide="prev">
+          <a class="left carousel-control" href="#featureChartCarousel" role="button" data-slide="prev"></span>
             <i class="fa fa-chevron-left" aria-hidden="true"></i>
             <span class="sr-only">Previous</span>
           </a>
@@ -64,7 +64,7 @@
 #end
 
 
-<div class="container-fluid" id="report">
+<div class="container-fluid" id="summary">
   <div class="row">
     <div class="col-md-10 col-md-offset-1">
       #includeStatsTable("Feature", $parallel, $all_features, $report_summary)

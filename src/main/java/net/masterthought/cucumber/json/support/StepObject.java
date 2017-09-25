@@ -11,7 +11,7 @@ import net.masterthought.cucumber.util.Util;
  * @author Damian Szczepanik (damianszczepanik@github)
  *
  */
-public class StepObject {
+public class StepObject implements Comparable<StepObject> {
 
     /** Name of the method / step implementation. This value is unique, there are no two steps with the same locations. */
     public final String location;
@@ -41,7 +41,7 @@ public class StepObject {
         this.statusCounter.incrementFor(status);
     }
 
-    public long getDuration() {
+    public long getDurations() {
         return totalDuration;
     }
 
@@ -61,11 +61,7 @@ public class StepObject {
         return totalOccurrences;
     }
 
-    /**
-     * Gets percentage how many steps passed (PASSED / All) formatted to double decimal precision.
-     *
-     * @return percentage of passed statuses
-     */
+    /** Returns as percentage how many steps passed (PASSED / All) formatted to double decimal precision. */
     public String getPercentageResult() {
         int total = 0;
         for (Status status : Status.values()) {
@@ -77,5 +73,11 @@ public class StepObject {
 
     public Status getStatus() {
         return statusCounter.getFinalStatus();
+    }
+
+    @Override
+    public int compareTo(StepObject o) {
+        // since there might be the only one StepObject with given location, compare by location only
+        return Integer.signum(location.compareTo(o.getLocation()));
     }
 }

@@ -7,8 +7,6 @@ import net.masterthought.cucumber.json.support.Status;
 import net.masterthought.cucumber.json.support.StatusCounter;
 import net.masterthought.cucumber.util.Util;
 
-import java.util.List;
-
 public class OverviewReport implements Reportable {
 
     private long duration;
@@ -94,13 +92,13 @@ public class OverviewReport implements Reportable {
     }
 
     @Override
-    public long getDuration() {
+    public long getDurations() {
         return duration;
     }
 
     @Override
-    public String getFormattedDuration() {
-        return Util.formatDuration(getDuration());
+    public String getFormattedDurations() {
+        return Util.formatDuration(getDurations());
     }
 
     @Override
@@ -116,10 +114,5 @@ public class OverviewReport implements Reportable {
     @Override
     public Status getStatus() {
         throw new NotImplementedException();
-    }
-
-    @Override
-    public List<String[]> getFailedCause(){
-        throw new NotImplementedException("Not implemented!");
     }
 }

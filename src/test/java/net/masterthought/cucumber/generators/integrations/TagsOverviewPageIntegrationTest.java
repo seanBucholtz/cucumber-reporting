@@ -2,10 +2,14 @@ package net.masterthought.cucumber.generators.integrations;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import net.masterthought.cucumber.generators.integrations.helpers.*;
 import org.junit.Test;
 
 import net.masterthought.cucumber.generators.TagsOverviewPage;
+import net.masterthought.cucumber.generators.integrations.helpers.DocumentAssertion;
+import net.masterthought.cucumber.generators.integrations.helpers.LeadAssertion;
+import net.masterthought.cucumber.generators.integrations.helpers.SummaryAssertion;
+import net.masterthought.cucumber.generators.integrations.helpers.TableRowAssertion;
+import net.masterthought.cucumber.generators.integrations.helpers.WebAssertion;
 
 /**
  * @author Damian Szczepanik (damianszczepanik@github)
@@ -18,7 +22,8 @@ public class TagsOverviewPageIntegrationTest extends PageTest {
         // given
         setUpWithJson(SAMPLE_JSON);
         page = new TagsOverviewPage(reportResult, configuration);
-        final String titleValue = "Cucumber Reports  - Tags Overview";
+        final String titleValue = String.format("Cucumber-JVM Reports  - Tags Overview",
+                configuration.getBuildNumber());
 
         // when
         page.generatePage();
@@ -65,30 +70,6 @@ public class TagsOverviewPageIntegrationTest extends PageTest {
     }
 
     @Test
-    public void generatePage_insertsChartData() {
-
-        // given
-        setUpWithJson(SAMPLE_JSON);
-        page = new TagsOverviewPage(reportResult, configuration);
-
-        // when
-        page.generatePage();
-
-        // then
-        DocumentAssertion document = documentFrom(page.getWebPage());
-
-        // check that data used by the charts is correctly inserted into the script section
-
-        assertThat(document.html()).contains("labels:  [ \"@checkout\",  \"@fast\",  \"@featureTag\", ]");
-        assertThat(document.html()).contains("data:  [ 62.50,  100.00,  100.00, ]");
-        assertThat(document.html()).contains("data:  [ 6.25,  0.00,  0.00, ]");
-        assertThat(document.html()).contains("data:  [ 12.50,  0.00,  0.00, ]");
-        assertThat(document.html()).contains("data:  [ 6.25,  0.00,  0.00, ]");
-        assertThat(document.html()).contains("data:  [ 12.50,  0.00,  0.00, ]");
-
-    }
-
-    @Test
     public void generatePage_generatesStatsTableHeader() {
 
         // given
@@ -100,7 +81,7 @@ public class TagsOverviewPageIntegrationTest extends PageTest {
 
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
-        TableRowAssertion[] headerRows = document.getReport().getTableStats().getHeaderRows();
+        TableRowAssertion[] headerRows = document.getSummary().getTableStats().getHeaderRows();
 
         assertThat(headerRows).hasSize(2);
 
@@ -124,25 +105,15 @@ public class TagsOverviewPageIntegrationTest extends PageTest {
 
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
-        TableRowAssertion[] bodyRows = document.getReport().getTableStats().getBodyRows();
+        TableRowAssertion[] bodyRows = document.getSummary().getTableStats().getBodyRows();
 
         assertThat(bodyRows).hasSize(3);
 
         TableRowAssertion firstRow = bodyRows[0];
         firstRow.hasExactValues("@checkout", "10", "1", "2", "1", "2", "16", "1", "1", "2", "231ms", "Failed");
-        firstRow.hasExactCSSClasses("tagname", "passed", "failed", "skipped", "pending", "undefined", "total", "passed",
-                "failed", "total", "duration", "failed");
+        firstRow.hasExactCSSClasses("tagname", "passed", "failed", "skipped", "pending", "undefined", "total", "passed", "failed", "total", "duration", "failed");
         firstRow.hasExactDataValues("", "", "", "", "", "", "", "", "", "", "231054778", "");
         firstRow.getReportLink().hasLabelAndAddress("@checkout", "report-tag_checkout.html");
-
-        CalloutAssertion[] secondRowCallouts = firstRow.getDropup().getCallouts();
-        assertThat(secondRowCallouts).hasSize(2);
-        secondRowCallouts[0].hasExactScenarioValue("Account may not have sufficient funds");
-        secondRowCallouts[0].getScenarioStepLink().hasLabelAndAddress("MachineFactory.wait()", "report-tag_checkout.html#0-hook-1500995314");
-        secondRowCallouts[0].hasExactErrorValue("Error message not found.");
-        secondRowCallouts[1].hasExactScenarioValue("Account may not have sufficient funds");
-        secondRowCallouts[1].getScenarioStepLink().hasLabelAndAddress("the card is valid", "report-tag_checkout.html#0-step-15");
-        secondRowCallouts[1].hasExactErrorValue("Error message not found.");
 
         TableRowAssertion secondRow = bodyRows[1];
         secondRow.hasExactValues("@fast", "6", "0", "0", "0", "0", "6", "1", "0", "1", "139ms", "Passed");
@@ -169,11 +140,11 @@ public class TagsOverviewPageIntegrationTest extends PageTest {
 
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
-        TableRowAssertion[] footerRows = document.getReport().getTableStats().getAllFooterRows();
+        TableRowAssertion[] footerRows = document.getSummary().getTableStats().getAllFooterRows();
 
         assertThat(footerRows).hasSize(2);
-        footerRows[0].hasExactValues("", "22", "1", "2", "1", "2", "28", "3", "1", "4", "509ms", "3");
-        footerRows[1].hasExactValues("", "78.57%", "3.57%", "7.14%", "3.57%", "7.14%", "", "75.00%", "25.00%", "", "", "50.00%");
+        footerRows[0].hasExactValues("3", "22", "1", "2", "1", "2", "28", "3", "1", "4", "509ms", "");
+        footerRows[1].hasExactValues("", "78.57%", "3.57%", "7.14%", "3.57%", "7.14%", "", "75.00%", "25.00%", "", "", "25.00%");
     }
 
     @Test
@@ -188,7 +159,7 @@ public class TagsOverviewPageIntegrationTest extends PageTest {
 
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
-        SummaryAssertion summary = document.getReport();
+        SummaryAssertion summary = document.getSummary();
         assertThat(summary.getEmptyReportMessage()).isEqualTo("You have no tags in your cucumber report");
     }
 }

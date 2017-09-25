@@ -34,7 +34,7 @@ public class TagReportPageTest extends PageTest {
     }
 
     @Test
-    public void prepareReport_AddsCustomProperties() {
+    public void prepareReportAddsCustomProperties() {
 
         // given
         TagObject tag = tags.get(1);
@@ -45,7 +45,7 @@ public class TagReportPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(8);
+        assertThat(context.getKeys()).hasSize(9);
         assertThat(context.get("tag")).isEqualTo(tag);
     }
 }

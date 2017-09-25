@@ -40,7 +40,7 @@ public class FeatureReportPageIntegrationTest extends PageTest {
         setUpWithJson(SAMPLE_JSON);
         final Feature feature = features.get(0);
         page = new FeatureReportPage(reportResult, configuration, feature);
-        final String titleValue = String.format("Cucumber Reports  - Feature: %s", feature.getName());
+        final String titleValue = String.format("Cucumber-JVM Reports  - Feature: %s", feature.getName());
 
         // when
         page.generatePage();
@@ -65,7 +65,7 @@ public class FeatureReportPageIntegrationTest extends PageTest {
 
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
-        TableRowAssertion bodyRow = document.getReport().getTableStats().getBodyRow();
+        TableRowAssertion bodyRow = document.getSummary().getTableStats().getBodyRow();
 
         bodyRow.hasExactValues(feature.getName(), "10", "0", "0", "0", "0", "10", "1", "0", "1", "1m 39s 263ms", "Passed");
         bodyRow.hasExactCSSClasses("tagname", "passed", "", "", "", "", "total", "passed", "", "total", "duration", "passed");
@@ -190,8 +190,6 @@ public class FeatureReportPageIntegrationTest extends PageTest {
             BriefAssertion brief = steps[i].getBrief();
             Step step = element.getSteps()[i];
 
-            String stepId = steps[i].attr("id");
-            assertThat(stepId).isEqualTo(step.getId());
             brief.hasStatus(step.getResult().getStatus());
             assertThat(brief.getKeyword()).isEqualTo(step.getKeyword());
             assertThat(brief.getName()).isEqualTo(step.getName());
@@ -213,9 +211,9 @@ public class FeatureReportPageIntegrationTest extends PageTest {
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
 
-        Output[] outputElements = features.get(1).getElements()[0].getSteps()[7].getOutputs();
+        Output outputElement = features.get(1).getElements()[0].getSteps()[7].getOutput();
         OutputAssertion output = document.getFeature().getElements()[0].getStepsSection().getSteps()[7].getOutput();
-        output.hasMessages(getMessages(outputElements));
+        output.hasMessages(outputElement.getMessages());
     }
 
     @Test
@@ -232,9 +230,9 @@ public class FeatureReportPageIntegrationTest extends PageTest {
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
 
-        Output[] outputElements = features.get(1).getElements()[0].getSteps()[8].getOutputs();
+        Output outputElement = features.get(1).getElements()[0].getSteps()[8].getOutput();
         OutputAssertion output = document.getFeature().getElements()[0].getStepsSection().getSteps()[8].getOutput();
-        output.hasMessages(getMessages(outputElements));
+        output.hasMessages(outputElement.getMessages());
     }
 
     @Test
@@ -308,7 +306,7 @@ public class FeatureReportPageIntegrationTest extends PageTest {
         asserEmbeddingFileExist(embeddings[0]);
         embeddingsElement[2].hasTextContent(embeddings[2].getData());
         asserEmbeddingFileExist(embeddings[2]);
-        embeddingsElement[3].hasSrcDocContent(embeddings[3].getData());
+        embeddingsElement[3].hasTextContent(embeddings[3].getData());
         asserEmbeddingFileExist(embeddings[3]);
     }
 

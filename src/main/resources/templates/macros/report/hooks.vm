@@ -1,6 +1,6 @@
-#macro(includeHooks $keyword, $hooks, $status)
+#macro(includeHooks, $keyword, $hooks, $status)
 
-#if(!$hooks.isEmpty())
+#if($hooks.size() > 0)
   <div class="inner-level hooks-$keyword.toLowerCase()">
     #set($hookId = $counter.next())
     <div data-toggle="collapse" class="#if($status.isPassed()) collapsed #end collapsable-control" data-target="#$keyword.toLowerCase()-$hookId">
@@ -9,7 +9,7 @@
 
     <div id="$keyword.toLowerCase()-$hookId" class="inner-level collapse collapsable-details #if (!$status.isPassed()) in #end">
       #foreach($hook in $hooks)
-        <div id=$hook.getId() class="hook">
+        <div class="hook">
           <div class="brief $hook.getResult().getStatus().getRawName()">
             <span class="keyword indention">$keyword</span>
             #if ($hook.getMatch())

@@ -268,7 +268,7 @@
                 ]
             }
         ],
-        "uri": "net/masterthought/example(s)/ATM:東京.feature"
+        "uri": "net/masterthought/example(s)/ATM:local.feature"
     },
     {
         "id": "account-holder-withdraws-more-cash",
@@ -440,15 +440,11 @@
                             },
                             {
                                 "mime_type": "text/html",
-                                "data": "PGh0bWw+PGhlYWQ+PC9oZWFkPjxib2R5PjxwPjxpPkhlbGxvPC9pPiA8Yj5Xb3JsZCE8L2I+PC9wPjxwPlRoZSB3aWtpcGVkaWEgbG9nbyBzaG91bGQgYXBwZWFyIGJlbG93PC9wPjxpbWcgc3JjPSJodHRwczovL2VuLndpa2lwZWRpYS5vcmcvc3RhdGljL2ltYWdlcy9wcm9qZWN0LWxvZ29zL2Vud2lraS5wbmciPjwvYm9keT48L2h0bWw+"
+                                "data": "PGk+SGVsbG88L2k+IDxiPldvcmxkITwvYj4="
                             },
                             {
-                                "mime_type": "text/xml",
-                                "data": "PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8eG1sPg0KICA8c29tZU5vZGUgYXR0cj0idmFsdWUiIC8+DQo8L3htbD4="
-                            },
-                            {
-                                "mime_type": "js",
-                                "data": "ZnVuY3Rpb24gbG9nZ2VyKG1lc3NhZ2UpIHsNCiAgY29uc29sZS5sb2cobWVzc2FnZSk7DQp9"
+                                "mime_type": "unknown",
+                                "data": "test"
                             }
                         ]
                     },
@@ -550,20 +546,6 @@
                         "name": "Stream closing",
                         "keyword": "Given ",
                         "line": 32
-                    }
-                ],
-                "type": "scenario"
-            },
-            {
-                "id": "undefined-result",
-                "name": "This step has no result...",
-                "keyword": "Scenario",
-                "line": 35,
-                "steps": [
-                    {
-                        "name": " - even it should",
-                        "keyword": "Given ",
-                        "line": 36
                     }
                 ],
                 "type": "scenario"

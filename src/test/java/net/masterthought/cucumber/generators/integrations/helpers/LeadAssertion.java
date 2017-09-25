@@ -6,10 +6,10 @@ package net.masterthought.cucumber.generators.integrations.helpers;
 public class LeadAssertion extends ReportAssertion {
 
     public String getHeader() {
-        return firstBySelector("h2", WebAssertion.class).text();
+        return oneBySelector("h2", WebAssertion.class).text();
     }
 
     public String getDescription() {
-        return firstBySelector("p", WebAssertion.class).text();
+        return oneBySelector("p", WebAssertion.class).text();
     }
 }

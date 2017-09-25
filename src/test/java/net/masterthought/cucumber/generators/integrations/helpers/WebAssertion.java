@@ -2,7 +2,9 @@ package net.masterthought.cucumber.generators.integrations.helpers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.text.StrBuilder;
 import org.jsoup.nodes.Element;
@@ -33,7 +35,15 @@ public class WebAssertion {
     public <T extends WebAssertion> T oneByClass(String cssClass, Class<T> clazz) {
         Elements inner = element.getElementsByClass(cssClass);
 
-        validateListSizeEqualToOne(inner, cssClass);
+        assertNotEmpty(inner, cssClass);
+        if (inner.size() > 1) {
+            StrBuilder sb = new StrBuilder();
+            for (int i = 0; i < inner.size(); i++) {
+                sb.append(inner.get(i)).append("\n");
+            }
+            throw new IllegalArgumentException(String.format("Expected one but found %d elements with class '%s': %s",
+                    inner.size(), cssClass, sb.toString()));
+        }
 
         return toAssertion(inner.first(), clazz);
     }
@@ -42,28 +52,24 @@ public class WebAssertion {
         Elements children = element.children();
 
         List<Element> matched = new ArrayList<>();
-        for(Element child : children)
-        {
+        for (int i = 0; i < children.size(); i++) {
+            Element child = children.get(i);
             if (child.hasClass(cssClass)) {
                 matched.add(child);
             }
         }
 
-        validateListSizeEqualToOne(matched, cssClass);
-
-        return toAssertion(matched.get(0), clazz);
-    }
-
-    private void validateListSizeEqualToOne(List<Element> list, String cssClass) {
-        assertNotEmpty(list, cssClass);
-        if (list.size() > 1) {
+        assertNotEmpty(matched, cssClass);
+        if (matched.size() > 1) {
             StrBuilder sb = new StrBuilder();
-            for(Element element : list) {
-                sb.append(element).append("\n");
+            for (int i = 0; i < matched.size(); i++) {
+                sb.append(matched.get(i)).append("\n");
             }
             throw new IllegalArgumentException(String.format("Expected one but found %d elements with class '%s': %s",
-                    list.size(), cssClass, sb.toString()));
+                    matched.size(), cssClass, sb.toString()));
         }
+
+        return toAssertion(matched.get(0), clazz);
     }
 
     public <T extends WebAssertion> T[] allByClass(String cssClass, Class<T> clazz) {
@@ -75,9 +81,9 @@ public class WebAssertion {
     }
 
     private <T extends WebAssertion> T toAssertion(Element inner, Class<T> clazz) {
-        T assertion;
+        T assertion = null;
         try {
-            assertion = clazz.newInstance();
+            assertion = (T) clazz.newInstance();
             assertion.element = inner;
             return assertion;
         } catch (InstantiationException | IllegalAccessException e) {
@@ -87,11 +93,6 @@ public class WebAssertion {
 
     public <T extends WebAssertion> T[] allBySelector(String selector, Class<T> clazz) {
         Elements inner = element.select(selector);
-        // when current element is <abc> selector and querying is by the same selector
-        // then at the first position is current element what is not desirable
-        if (this.element.equals(inner.get(0))) {
-            inner.remove(0);
-        }
         assertNotEmpty(inner, selector);
 
         return toArray(inner, clazz);
@@ -99,14 +100,14 @@ public class WebAssertion {
 
     private <T extends WebAssertion> T[] toArray(Elements inner, Class<T> clazz) {
         List<T> elements = new ArrayList<>();
-        for(Element element : inner) {
-            T assertion;
+        for (int i = 0; i < inner.size(); i++) {
+            T assertion = null;
             try {
-                assertion = clazz.newInstance();
+                assertion = (T) clazz.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new IllegalArgumentException(e);
             }
-            assertion.element = element;
+            assertion.element = inner.get(i);
             elements.add(assertion);
         }
 
@@ -115,10 +116,15 @@ public class WebAssertion {
         return elements.toArray(array);
     }
 
-    public <T extends WebAssertion> T firstBySelector(String selector, Class<T> clazz) {
+    public <T extends WebAssertion> T oneBySelector(String selector, Class<T> clazz) {
         Elements inner = element.select(selector);
 
         assertNotEmpty(inner, selector);
+        if (inner.size() > 1) {
+            throw new IllegalArgumentException(
+                    String.format("Found %d elements with selector '%s': %s", inner.size(), selector, element.html()));
+        }
+
         return toAssertion(inner.first(), clazz);
     }
 
@@ -140,10 +146,5 @@ public class WebAssertion {
 
     public String attr(String attributeKey) {
         return element.attr(attributeKey);
-    }
-
-    @Override
-    public String toString() {
-        return html();
     }
 }

@@ -14,8 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.app.event.EventCartridge;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
@@ -26,8 +24,9 @@ import net.masterthought.cucumber.util.Util;
 
 /**
  * Delivers common methods for page generation.
- *
+ * 
  * @author Damian Szczepanik (damianszczepanik@github)
+ *
  */
 public abstract class AbstractPage {
 
@@ -39,29 +38,25 @@ public abstract class AbstractPage {
     /** Name of the HTML file which will be generated. */
     private final String templateFileName;
     /** Results of the report. */
-    protected final ReportResult reportResult;
+    protected final ReportResult report;
     /** Configuration used for this report execution. */
     protected final Configuration configuration;
 
     protected AbstractPage(ReportResult reportResult, String templateFileName, Configuration configuration) {
         this.templateFileName = templateFileName;
-        this.reportResult = reportResult;
+        this.report = reportResult;
         this.configuration = configuration;
 
         this.engine.init(buildProperties());
         buildGeneralParameters();
     }
 
-    public void generatePage() {
+    public final void generatePage() {
         prepareReport();
         generateReport();
     }
 
-    /**
-     * Returns HTML file name (with extension) for this report.
-     *
-     * @return HTML file for the report
-     */
+    /** Returns HTML file name (with extension) for this report. */
     public abstract String getWebPage();
 
     protected abstract void prepareReport();
@@ -82,35 +77,32 @@ public abstract class AbstractPage {
     private Properties buildProperties() {
         Properties props = new Properties();
         props.setProperty("resource.loader", "class");
-        props.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getCanonicalName());
+        props.setProperty("class.resource.loader.class",
+                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         props.setProperty("runtime.log", new File(configuration.getReportDirectory(), "velocity.log").getPath());
 
         return props;
     }
 
     private void buildGeneralParameters() {
-        // to escape html and xml
-        EventCartridge ec = new EventCartridge();
-        ec.addEventHandler(new EscapeHtmlReference());
-        context.attachEventCartridge(ec);
-
         // to provide unique ids for elements on each page
         context.put("counter", new Counter());
         context.put("util", Util.INSTANCE);
 
-        context.put("run_with_jenkins", configuration.isRunWithJenkins());
+        context.put("jenkins_source", configuration.isRunWithJenkins());
         context.put("trends_present", configuration.getTrendsStatsFile() != null);
+        context.put("jenkins_base", configuration.getJenkinsBasePath());
         context.put("build_project_name", configuration.getProjectName());
         context.put("build_number", configuration.getBuildNumber());
 
         // if report generation fails then report is null
-        String formattedTime = reportResult != null ? reportResult.getBuildTime() : ReportResult.getCurrentTime();
+        String formattedTime = report != null ? report.getBuildTime() : ReportResult.getCurrentTime();
         context.put("build_time", formattedTime);
 
         // build number is not mandatory
         String buildNumber = configuration.getBuildNumber();
         if (buildNumber != null) {
-            if (NumberUtils.isCreatable(buildNumber)) {
+            if (NumberUtils.isNumber(buildNumber)) {
                 context.put("build_previous_number", Integer.parseInt(buildNumber) - 1);
             } else {
                 LOG.info("Could not parse build number: {}.", configuration.getBuildNumber());

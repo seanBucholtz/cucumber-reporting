@@ -1,34 +1,28 @@
 package net.masterthought.cucumber;
 
 import java.io.File;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import net.masterthought.cucumber.sorting.SortingMethod;
+import org.apache.commons.lang.StringUtils;
 
 public class Configuration {
 
     private static final String EMBEDDINGS_DIRECTORY = "embeddings";
 
     private boolean parallelTesting;
+    private String jenkinsBasePath;
     private boolean runWithJenkins;
 
     private File reportDirectory;
 
-    private File trendsFile;
-    private int trendsLimit;
+    private File trendsStatsFile;
     private String buildNumber;
     private String projectName;
 
-    private List<Map.Entry<String, String>> classifications = new ArrayList<>();
-
     private Collection<Pattern> tagsToExcludeFromChart = new ArrayList<>();
-    private SortingMethod sortingMethod = SortingMethod.NATURAL;
 
     public Configuration(File reportOutputDirectory, String projectName) {
         this.reportDirectory = reportOutputDirectory;
@@ -41,6 +35,14 @@ public class Configuration {
 
     public void setParallelTesting(boolean parallelTesting) {
         this.parallelTesting = parallelTesting;
+    }
+
+    public String getJenkinsBasePath() {
+        return StringUtils.defaultString(jenkinsBasePath);
+    }
+
+    public void setJenkinsBasePath(String jenkinsBase) {
+        this.jenkinsBasePath = jenkinsBase;
     }
 
     public boolean isRunWithJenkins() {
@@ -56,39 +58,11 @@ public class Configuration {
     }
 
     public File getTrendsStatsFile() {
-        return trendsFile;
+        return trendsStatsFile;
     }
 
-    /**
-     * Checks if the file for the trends was set.
-     *
-     * @return <code>true</code> if the file location was provided, otherwise <code>false</code>
-     */
-    public boolean isTrendsStatsFile() {
-        return trendsFile != null;
-    }
-
-    /**
-     * Calls {@link #setTrends(File, int)} with zero limit.
-     * @param trendsFile file with trends
-     */
-    public void setTrendsStatsFile(File trendsFile) {
-        setTrends(trendsFile, 0);
-    }
-
-    public int getTrendsLimit() {
-        return trendsLimit;
-    }
-
-    /**
-     * Sets configuration for trends. When the limit is set to 0 then all items will be displayed.
-     *
-     * @param trendsFile  file where information about previous builds is stored
-     * @param trendsLimit number of builds that should be presented (older builds are skipped)
-     */
-    public void setTrends(File trendsFile, int trendsLimit) {
-        this.trendsFile = trendsFile;
-        this.trendsLimit = trendsLimit;
+    public void setTrendsStatsFile(File trendsStatsFile) {
+        this.trendsStatsFile = trendsStatsFile;
     }
 
     public String getBuildNumber() {
@@ -121,7 +95,7 @@ public class Configuration {
      * @param patterns Regex patterns to match against tags
      * @throws ValidationException when any of the given strings is not a valid regex pattern.
      */
-    public void setTagsToExcludeFromChart(String... patterns) {
+    public void setTagsToExcludeFromChart(String... patterns) throws ValidationException {
         for (String pattern : patterns) {
             try {
                 tagsToExcludeFromChart.add(Pattern.compile(pattern));
@@ -129,39 +103,5 @@ public class Configuration {
                 throw new ValidationException(e);
             }
         }
-    }
-
-    /**
-     * Adds metadata that will be displayed at the main page of the report. It is useful when there is a few reports are
-     * generated at the same time but with different parameters/configurations.
-     *
-     * @param name  name of the property
-     * @param value value of the property
-     */
-    public void addClassifications(String name, String value) {
-        classifications.add(new AbstractMap.SimpleEntry<>(name, value));
-    }
-
-    /**
-     * Returns the classification for the report.
-     */
-    public List<Map.Entry<String, String>> getClassifications() {
-        return classifications;
-    }
-
-    /**
-     * Configure how items will be sorted in the report by default.
-     *
-     * @param sortingMethod how the items should be sorted
-     */
-    public void setSortingMethod(SortingMethod sortingMethod) {
-        this.sortingMethod = sortingMethod;
-    }
-
-    /**
-     * Returns the default sorting method.
-     */
-    public SortingMethod getSortingMethod() {
-        return this.sortingMethod;
     }
 }

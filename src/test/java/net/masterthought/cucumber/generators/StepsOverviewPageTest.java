@@ -34,7 +34,7 @@ public class StepsOverviewPageTest extends PageTest {
     }
 
     @Test
-    public void prepareReport_AddsCustomProperties() {
+    public void prepareReportAddsCustomProperties() {
 
         // given
         page = new StepsOverviewPage(reportResult, configuration);
@@ -44,14 +44,14 @@ public class StepsOverviewPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(11);
+        assertThat(context.getKeys()).hasSize(12);
         assertThat(context.get("all_steps")).isEqualTo(steps);
 
         int allOccurrences = 0;
         long allDurations = 0;
         for (StepObject stepObject : reportResult.getAllSteps()) {
             allOccurrences += stepObject.getTotalOccurrences();
-            allDurations += stepObject.getDuration();
+            allDurations += stepObject.getDurations();
         }
         assertThat(context.get("all_occurrences")).isEqualTo(allOccurrences);
         assertThat(context.get("all_durations")).isEqualTo(Util.formatDuration(allDurations));

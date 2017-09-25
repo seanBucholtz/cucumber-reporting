@@ -8,7 +8,6 @@ import net.masterthought.cucumber.generators.TagReportPage;
 import net.masterthought.cucumber.generators.integrations.helpers.BriefAssertion;
 import net.masterthought.cucumber.generators.integrations.helpers.DocumentAssertion;
 import net.masterthought.cucumber.generators.integrations.helpers.ElementAssertion;
-import net.masterthought.cucumber.generators.integrations.helpers.LinkAssertion;
 import net.masterthought.cucumber.generators.integrations.helpers.TableRowAssertion;
 import net.masterthought.cucumber.json.Step;
 import net.masterthought.cucumber.json.support.TagObject;
@@ -25,7 +24,7 @@ public class TagReportPageIntegrationTest extends PageTest {
         setUpWithJson(SAMPLE_JSON);
         final TagObject tag = tags.get(0);
         page = new TagReportPage(reportResult, configuration, tag);
-        final String titleValue = String.format("Cucumber Reports  - Tag: %s", tag.getName());
+        final String titleValue = String.format("Cucumber-JVM Reports  - Tag: %s", tag.getName());
 
         // when
         page.generatePage();
@@ -50,29 +49,10 @@ public class TagReportPageIntegrationTest extends PageTest {
 
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
-        TableRowAssertion bodyRow = document.getReport().getTableStats().getBodyRow();
+        TableRowAssertion bodyRow = document.getSummary().getTableStats().getBodyRow();
 
         bodyRow.hasExactValues(tag.getName(), "10", "1", "2", "1", "2", "16", "1", "1", "2", "231ms", "Failed");
         bodyRow.hasExactCSSClasses("tagname", "passed", "failed", "skipped", "pending", "undefined", "total", "passed", "failed", "total", "duration", "failed");
-    }
-
-    @Test
-    public void generatePage_generatesFeatureNames() {
-
-        // given
-        setUpWithJson(SAMPLE_JSON);
-        final TagObject tag = tags.get(1);
-        page = new TagReportPage(reportResult, configuration, tag);
-
-        // when
-        page.generatePage();
-
-        // then
-        DocumentAssertion document = documentFrom(page.getWebPage());
-        ElementAssertion[] elements = document.getElements();
-
-        LinkAssertion featureName = elements[0].getFeatureName();
-        featureName.hasLabelAndAddress(features.get(0).getName(), features.get(0).getReportFileName());
     }
 
     @Test
@@ -94,7 +74,7 @@ public class TagReportPageIntegrationTest extends PageTest {
     }
 
     @Test
-    public void generatePage_generatesSteps() {
+    public void generatePage_generatesSampleStep() {
 
         // given
         setUpWithJson(SAMPLE_JSON);

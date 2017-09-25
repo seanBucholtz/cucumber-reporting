@@ -6,7 +6,7 @@ package net.masterthought.cucumber.generators.integrations.helpers;
 public class SummaryAssertion extends ReportAssertion {
 
     public String getEmptyReportMessage() {
-        return firstBySelector("p", WebAssertion.class).text();
+        return oneBySelector("p", WebAssertion.class).text();
     }
 
     public TableAssertion getTableStats() {

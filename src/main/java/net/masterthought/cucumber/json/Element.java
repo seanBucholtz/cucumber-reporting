@@ -1,16 +1,13 @@
 package net.masterthought.cucumber.json;
 
-import net.masterthought.cucumber.json.support.Resultsable;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
-import net.masterthought.cucumber.json.support.Durationable;
 import net.masterthought.cucumber.json.support.Status;
 import net.masterthought.cucumber.json.support.StatusCounter;
-import net.masterthought.cucumber.util.Util;
 
-public class Element implements Durationable {
+public class Element {
 
-    private String index = null;
     // Start: attributes from JSON file report
     private final String name = null;
     private final String type = null;
@@ -30,7 +27,6 @@ public class Element implements Durationable {
     private Status stepsStatus;
 
     private Feature feature;
-    private long duration;
 
     public Step[] getSteps() {
         return steps;
@@ -68,6 +64,10 @@ public class Element implements Durationable {
         return name;
     }
 
+    public String getEscapedName() {
+        return StringUtils.defaultString(StringEscapeUtils.escapeHtml(name));
+    }
+
     public String getKeyword() {
         return keyword;
     }
@@ -81,36 +81,12 @@ public class Element implements Durationable {
     }
 
     public boolean isScenario() {
-        return SCENARIO_TYPE.equalsIgnoreCase(type);
+        return SCENARIO_TYPE.equals(type);
     }
 
     public Feature getFeature() {
         return feature;
     }
-
-    @Override
-    public long getDuration() {
-        return duration;
-    }
-
-    @Override
-    public String getFormattedDuration() {
-        return Util.formatDuration(duration);
-    }
-
-    /**
-     * Retrieves the index value for which this current instance maps to
-     * in the Elements array contained within the 'feature' class-member.
-     * @return the index value
-     */
-    public String getIndex() { return this.index; }
-
-    /**
-     * Sets the index value for which this current instance maps to
-     * in the Elements array contained within the 'feature' class-member.
-     * @param index the index value
-     */
-    public void setIndex(Integer index) { this.index = index.toString(); }
 
     public void setMetaData(Feature feature) {
         this.feature = feature;
@@ -119,8 +95,6 @@ public class Element implements Durationable {
         afterStatus = calculateHookStatus(after);
         stepsStatus = calculateStepsStatus();
         elementStatus = calculateElementStatus();
-        Resultsable[] resultsables = Util.joinResultables(before, steps, after);
-        for(Resultsable resultsable : resultsables) { resultsable.setId(resultsable.generateId(this)); }
     }
 
     private Status calculateHookStatus(Hook[] hooks) {
@@ -143,9 +117,7 @@ public class Element implements Durationable {
     private Status calculateStepsStatus() {
         StatusCounter statusCounter = new StatusCounter();
         for (Step step : steps) {
-            Result result = step.getResult();
-            statusCounter.incrementFor(result.getStatus());
-            duration += result.getDuration();
+            statusCounter.incrementFor(step.getResult().getStatus());
         }
         return statusCounter.getFinalStatus();
     }

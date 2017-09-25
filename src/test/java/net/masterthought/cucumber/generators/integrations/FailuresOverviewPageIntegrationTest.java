@@ -23,7 +23,7 @@ public class FailuresOverviewPageIntegrationTest extends PageTest {
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber("1");
         page = new FailuresOverviewPage(reportResult, configuration);
-        final String titleValue = String.format("Cucumber Reports (no %s) - Failures Overview",
+        final String titleValue = String.format("Cucumber-JVM Reports (no %s) - Failures Overview",
                 configuration.getBuildNumber());
 
         // when
@@ -66,7 +66,7 @@ public class FailuresOverviewPageIntegrationTest extends PageTest {
 
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
-        SummaryAssertion summary = document.getReport();
+        SummaryAssertion summary = document.getSummary();
         assertThat(summary.getEmptyReportMessage()).isEqualTo("You have no failed scenarios in your Cucumber report");
     }
 
@@ -83,7 +83,7 @@ public class FailuresOverviewPageIntegrationTest extends PageTest {
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
         ElementAssertion[] elements = document.getElements();
-        assertThat(elements).hasSize(2);
-        assertThat(elements[0].getBrief().getName()).isEqualTo(features.get(1).getElements()[0].getName());
+        assertThat(elements).hasSize(1);
+        assertThat(elements[0].getBrief().getName()).isEqualTo(features.get(1).getElements()[0].getEscapedName());
     }
 }

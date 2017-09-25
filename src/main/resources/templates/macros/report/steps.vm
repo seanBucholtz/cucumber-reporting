@@ -8,10 +8,9 @@
 
   <div id="steps-$stepsId" class="inner-level collapse collapsable-details #if (!$element.getStatus().isPassed()) in #end">
     #foreach($step in $element.getSteps())
-      <div id="$step.getId()" class="step">
+      <div class="step">
         #includeBrief($step.getKeyword(), $step.getResult().getStatus(), $step.getName(), false, $step.getResult())
-        #set($isPassed = $step.getResult().getStatus().isPassed())
-        #includeMessage($step.getResult().getErrorMessageTitle(), $step.getResult().getErrorMessage(), $isPassed)
+        #includeMessage("Error message", $step.getResult().getErrorMessage())
 
         #if (!$step.getRows().isEmpty())
           <table class="step-arguments">
@@ -26,7 +25,7 @@
         #end
 
         #includeDocString($step.getDocString())
-        #includeOutput($step.getOutputs(), $isPassed)
+        #includeOutput($step.getOutput())
         #includeEmbeddings($step.getEmbeddings())
       </div>
     #end

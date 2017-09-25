@@ -5,19 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.util.Properties;
 
-import org.apache.commons.lang3.StringUtils;
+import mockit.Deencapsulation;
 import org.apache.velocity.VelocityContext;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
-import mockit.Deencapsulation;
 import net.masterthought.cucumber.ReportBuilder;
-import net.masterthought.cucumber.Trends;
-import net.masterthought.cucumber.ValidationException;
 import net.masterthought.cucumber.generators.integrations.PageTest;
-import net.masterthought.cucumber.generators.integrations.helpers.DocumentAssertion;
 import net.masterthought.cucumber.util.Counter;
 import net.masterthought.cucumber.util.Util;
 
@@ -25,9 +19,6 @@ import net.masterthought.cucumber.util.Util;
  * @author Damian Szczepanik (damianszczepanik@github)
  */
 public class AbstractPageTest extends PageTest {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -47,50 +38,6 @@ public class AbstractPageTest extends PageTest {
         File reportFile = new File(configuration.getReportDirectory(),
                 ReportBuilder.BASE_DIRECTORY + File.separatorChar + page.getWebPage());
         assertThat(reportFile).exists();
-    }
-
-
-    @Test
-    public void generateReport_DisplaysContentAsEscapedText() {
-
-        // given
-        page = new FeatureReportPage(reportResult, configuration, features.get(1));
-
-        // when
-        page.generatePage();
-
-        // then
-        DocumentAssertion document = documentFrom(page.getWebPage());
-        assertThat(document.getFeature().getDescription())
-                .isEqualTo("As an Account Holder I want to withdraw cash from an ATM,<br>so that I can get money when the bank is closed");
-        assertThat(document.getFeature().getElements()[0].getStepsSection().getSteps()[5].getEmbedding()[3].text())
-                .isEqualTo("Attachment 4 (HTML)");
-        assertThat(document.getFeature().getElements()[0].getStepsSection().getSteps()[5].getMessage().text())
-                .isEqualTo("java.lang.AssertionError: java.lang.AssertionError: \n" +
-                        "Expected: is <80>\n" +
-                        "     got: <90>\n" +
-                        "\n" +
-                        "\tat org.junit.Assert.assertThat(Assert.java:780)\n" +
-                        "\tat org.junit.Assert.assertThat(Assert.java:738)\n" +
-                        "\tat net.masterthought.example.ATMScenario.checkBalance(ATMScenario.java:69)\n" +
-                        "\tat ✽.And the account balance should be 90(net/masterthought/example/ATMK.feature:12)");
-    }
-
-    @Test
-    public void generateReport_OnInvalidPath_ThrowsException() {
-
-        // given
-        page = new FeaturesOverviewPage(reportResult, configuration) {
-            @Override
-            public String getWebPage() {
-                // invalid file path
-                return StringUtils.EMPTY;
-            }
-        };
-
-        // when
-        thrown.expect(ValidationException.class);
-        Deencapsulation.invoke(page, "generatePage");
     }
 
     @Test
@@ -120,7 +67,7 @@ public class AbstractPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(7);
+        assertThat(context.getKeys()).hasSize(8);
 
         Object obj = context.get("counter");
         assertThat(obj).isInstanceOf(Counter.class);
@@ -129,9 +76,11 @@ public class AbstractPageTest extends PageTest {
 
         assertThat(context.get("util")).isInstanceOf(Util.class);
 
-        assertThat(context.get("run_with_jenkins")).isEqualTo(configuration.isRunWithJenkins());
+        assertThat(context.get("jenkins_source")).isEqualTo(configuration.isRunWithJenkins());
+        assertThat(context.get("jenkins_base")).isEqualTo(configuration.getJenkinsBasePath());
         assertThat(context.get("build_project_name")).isEqualTo(configuration.getProjectName());
         assertThat(context.get("build_number")).isEqualTo(configuration.getBuildNumber());
+        assertThat(context.get("jenkins_source")).isNotNull();
     }
 
     @Test
@@ -146,7 +95,7 @@ public class AbstractPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(8);
+        assertThat(context.getKeys()).hasSize(9);
         assertThat(context.get("build_time")).isNotNull();
     }
 
@@ -162,7 +111,7 @@ public class AbstractPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(7);
+        assertThat(context.getKeys()).hasSize(8);
         assertThat(context.get("build_previous_number")).isNull();
     }
 
@@ -178,7 +127,7 @@ public class AbstractPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(8);
+        assertThat(context.getKeys()).hasSize(9);
         assertThat(context.get("build_previous_number")).isEqualTo(33);
     }
 
@@ -186,9 +135,8 @@ public class AbstractPageTest extends PageTest {
     public void buildGeneralParameters_OnTrendsStatsFile_AddsTrendsFlag() {
 
         // given
-        configuration.setTrendsStatsFile(TRENDS_FILE);
-        Trends trends = Deencapsulation.invoke(ReportBuilder.class, "loadTrends", TRENDS_FILE);
-        page = new TrendsOverviewPage(reportResult, configuration, trends);
+        configuration.setTrendsStatsFile(new File("."));
+        page = new TrendsOverviewPage(reportResult, configuration);
 
         // when
         boolean hasTrends = (Boolean) page.context.get("trends_present");

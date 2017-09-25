@@ -2,6 +2,8 @@ package net.masterthought.cucumber;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +23,6 @@ import net.masterthought.cucumber.json.support.Resultsable;
 import net.masterthought.cucumber.json.support.Status;
 import net.masterthought.cucumber.json.support.StepObject;
 import net.masterthought.cucumber.json.support.TagObject;
-import net.masterthought.cucumber.sorting.SortingFactory;
-import net.masterthought.cucumber.sorting.SortingMethod;
 
 public class ReportResult {
 
@@ -30,18 +30,13 @@ public class ReportResult {
     private final Map<String, TagObject> allTags = new TreeMap<>();
     private final Map<String, StepObject> allSteps = new TreeMap<>();
 
-    /**
-     * Time when this report was created.
-     */
     private final String buildTime;
-    private final SortingFactory sortingFactory;
 
     private final OverviewReport featuresReport = new OverviewReport();
     private final OverviewReport tagsReport = new OverviewReport();
 
-    public ReportResult(List<Feature> features, SortingMethod sortingMethod) {
+    public ReportResult(List<Feature> features) {
         this.buildTime = getCurrentTime();
-        this.sortingFactory = new SortingFactory(sortingMethod);
 
         for (Feature feature : features) {
             processFeature(feature);
@@ -49,15 +44,21 @@ public class ReportResult {
     }
 
     public List<Feature> getAllFeatures() {
-        return sortingFactory.sortFeatures(allFeatures);
+        return toSortedList(allFeatures);
     }
 
     public List<TagObject> getAllTags() {
-        return sortingFactory.sortTags(allTags.values());
+        return toSortedList(allTags.values());
     }
 
     public List<StepObject> getAllSteps() {
-        return sortingFactory.sortSteps(allSteps.values());
+        return toSortedList(allSteps.values());
+    }
+
+    private static <T extends Comparable<? super T>> List<T> toSortedList(Collection<T> values) {
+        List<T> list = new ArrayList<T>(values);
+        Collections.sort(list);
+        return list;
     }
 
     public Reportable getFeatureReport() {
@@ -66,6 +67,14 @@ public class ReportResult {
 
     public Reportable getTagReport() {
         return tagsReport;
+    }
+
+    public int getAllPassedFeatures() {
+        return featuresReport.getPassedFeatures();
+    }
+
+    public int getAllFailedFeatures() {
+        return featuresReport.getFailedFeatures();
     }
 
     public String getBuildTime() {
@@ -103,9 +112,7 @@ public class ReportResult {
             countSteps(element.getBefore());
             countSteps(element.getAfter());
         }
-
         featuresReport.incFeaturesFor(feature.getStatus());
-        tagsReport.incFeaturesFor(feature.getStatus());
     }
 
     private void processTag(Tag tag, Element element, Status status) {
@@ -129,13 +136,16 @@ public class ReportResult {
 
             Match match = step.getMatch();
             // no match = could not find method that was matched to this step -> status is missing
-            if (match != null) {
-                String methodName = match.getLocation();
-                // location is missing so there is no way to identify step
-                if (StringUtils.isNotEmpty(methodName)) {
-                    addNewStep(step.getResult(), methodName);
-                }
+            if (match == null) {
+                continue;
             }
+
+            String methodName = match.getLocation();
+            // location is missing so there is no way to identify step
+            if (StringUtils.isEmpty(methodName)) {
+                continue;
+            }
+            addNewStep(step.getResult(), methodName);
         }
     }
 

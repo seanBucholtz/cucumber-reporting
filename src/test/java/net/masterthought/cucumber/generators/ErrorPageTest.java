@@ -20,7 +20,7 @@ public class ErrorPageTest extends PageTest {
     }
 
     @Test
-    public void prepareReport_AddsCustomProperties() {
+    public void prepareReportAddsCustomProperties() {
 
         // give
         Exception exception = new Exception();
@@ -31,7 +31,7 @@ public class ErrorPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(9);
+        assertThat(context.getKeys()).hasSize(10);
         assertThat(context.get("output_message")).isEqualTo(ExceptionUtils.getStackTrace(exception));
         assertThat(context.get("json_files")).isEqualTo(jsonReports);
     }

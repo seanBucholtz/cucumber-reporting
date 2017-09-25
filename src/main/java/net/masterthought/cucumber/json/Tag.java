@@ -1,8 +1,6 @@
 package net.masterthought.cucumber.json;
 
 import net.masterthought.cucumber.util.Util;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class Tag {
 
@@ -25,14 +23,12 @@ public class Tag {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(name).toHashCode();
+        return name.hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof Tag)) { return false; }
-        if(obj == this) { return true; }
-        Tag tag = (Tag) obj;
-        return new EqualsBuilder().append(this.name, tag.name).isEquals();
+    public boolean equals(Object tag) {
+        // not fully implemented but I don't expect to have different objects here
+        return ((Tag) tag).name.equals(name);
     }
 }

@@ -33,7 +33,7 @@ public class FeaturesOverviewPageTest extends PageTest {
     }
 
     @Test
-    public void prepareReport_AddsCustomProperties() {
+    public void prepareReportAddsCustomProperties() {
 
         // given
         page = new FeaturesOverviewPage(reportResult, configuration);

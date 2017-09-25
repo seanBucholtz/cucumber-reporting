@@ -1,9 +1,6 @@
 package net.masterthought.cucumber.json;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -54,92 +51,23 @@ public class ResultTest extends PageTest {
         Result result = features.get(0).getElements()[0].getSteps()[2].getResult();
 
         // when
-        String duration = result.getFormattedDuration();
+        String duration = result.getFormatedDuration();
 
         // then
         assertThat(duration).isEqualTo("007ms");
     }
 
     @Test
-    public void getErrorMessage_ReturnsErrorMessage() {
+    public void getErrorMessage_ReturnsMessage() {
 
-        // given
-        Result result = features.get(1).getElements()[0].getSteps()[5].getResult();
-
-        // when
-        String errorMessage = result.getErrorMessage();
-
-        // then
-        assertThat(errorMessage).isEqualTo("java.lang.AssertionError: \n" +
-                "Expected: is <80>\n" +
-                "     got: <90>\n" +
-                "\n" +
-                "\tat org.junit.Assert.assertThat(Assert.java:780)\n" +
-                "\tat org.junit.Assert.assertThat(Assert.java:738)\n" +
-                "\tat net.masterthought.example.ATMScenario.checkBalance(ATMScenario.java:69)\n" +
-                "\tat ✽.And the account balance should be 90(net/masterthought/example/ATMK.feature:12)\n");
-    }
-
-    @Test
-    public void getErrorMessageTitle_ReturnsErrorMessageTitle() {
-
-        // given
-        Result result = features.get(1).getElements()[0].getSteps()[5].getResult();
+        // give
+        Result result = features.get(0).getElements()[1].getAfter()[0].getResult();
 
         // when
-        String errorMessageTitle = result.getErrorMessageTitle();
+        String message = result.getErrorMessage();
 
         // then
-        assertThat(errorMessageTitle).isEqualTo("java.lang.AssertionError: ");
-    }
-
-    @Test
-    public void getErrorMessageTitle_ReturnsNull() {
-
-        // given
-        Result result = features.get(0).getElements()[0].getSteps()[0].getResult();
-
-        // when
-        String errorMessageTitle = result.getErrorMessageTitle();
-
-        // then
-        assertThat(errorMessageTitle).isEqualTo(null);
-    }
-
-    @Test
-    public void hashCode_ReturnHashCode() throws Exception {
-        Result result = features.get(0).getElements()[0].getSteps()[1].getResult();
-        assertEquals(-73678307, result.hashCode());
-    }
-
-    @Test
-    public void equals_ReturnTrueSameInstance() throws Exception {
-        Result result = features.get(0).getElements()[0].getSteps()[1].getResult();
-        assertTrue(result.equals(result));
-    }
-
-    @Test
-    public void equals_ReturnTrueSameValue() throws Exception {
-        Result result1 = features.get(0).getElements()[0].getSteps()[1].getResult();
-        Result result2 = new Result();
-        TestUtils.setFieldViaReflection("status", Status.PASSED, result2);
-        TestUtils.setFieldViaReflection("duration", 9520000L, result2);
-        assertTrue(result1.equals(result2));
-    }
-
-    @Test
-    public void equals_ReturnFalseNotSameValue() throws Exception {
-        Result result1 = features.get(0).getElements()[0].getSteps()[1].getResult();
-        Result result2 = new Result();
-        TestUtils.setFieldViaReflection("status", Status.FAILED, result2);
-        TestUtils.setFieldViaReflection("duration", 9520666L, result2);
-        assertFalse(result1.equals(result2));
-    }
-
-    @Test
-    public void equals_ReturnFalseNotAnInstanceOf() throws Exception {
-        Result result = features.get(0).getElements()[0].getSteps()[1].getResult();
-        assertFalse(result.equals(new Step()));
+        assertThat(message).isEqualTo("Completed");
     }
 
 }

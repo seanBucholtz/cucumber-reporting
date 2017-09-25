@@ -9,17 +9,17 @@ import net.masterthought.cucumber.ReportBuilder;
 public class NavigationItemAssertion extends LinkAssertion {
 
     public void hasLinkToJenkins(Configuration configuration) {
-        hasLabelAndAddress("Jenkins", "../");
+        hasLabelAndAddress("Jenkins", "../" + configuration.getJenkinsBasePath());
     }
 
     public void hasLinkToPreviousResult(Configuration configuration, String page) {
         final Integer prevBuildNumber = Integer.parseInt(configuration.getBuildNumber()) - 1;
-        hasLabelAndAddress("Previous results", "../../" + prevBuildNumber
+        hasLabelAndAddress("Previous results", "../.." + configuration.getJenkinsBasePath() + "/" + prevBuildNumber
                 + "/" + ReportBuilder.BASE_DIRECTORY + "/" + page);
     }
 
     public void hasLinkToLastResult(Configuration configuration, String page) {
-        hasLabelAndAddress("Latest results", "../../lastCompletedBuild/" + ReportBuilder.BASE_DIRECTORY + "/" + page);
+        hasLabelAndAddress("Latest results", "../../lastBuild/" + ReportBuilder.BASE_DIRECTORY + "/" + page);
     }
 
     public void hasLinkToFeatures() {

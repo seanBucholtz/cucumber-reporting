@@ -169,6 +169,21 @@ public class ElementTest extends PageTest {
     }
 
     @Test
+    public void getEscapedName_ReturnsNameAsPlainText() {
+
+        // given
+        Element element = features.get(0).getElements()[1];
+
+        // when
+        String name = element.getEscapedName();
+
+        // then
+        // test only this name which has escaped characters
+        assertThat(name).isNotEqualTo(element.getName());
+        assertThat(name).isEqualTo("Account has &lt;sufficient funds&gt;");
+    }
+
+    @Test
     public void getKeyword_ReturnsName() {
 
         // given
@@ -246,31 +261,5 @@ public class ElementTest extends PageTest {
 
         // then
         assertThat(feature.getId()).isEqualTo("account-holder-withdraws-cash");
-    }
-
-    @Test
-    public void getDuration_ReturnsDuration() {
-
-        // given
-        Element element = features.get(0).getElements()[0];
-
-        // when
-        long duration = element.getDuration();
-
-        // then
-        assertThat(duration).isEqualTo(99124118111L);
-    }
-
-    @Test
-    public void getFormattedDuration_ReturnsFormattedDuration() {
-
-        // given
-        Element element = features.get(0).getElements()[0];
-
-        // when
-        String duration = element.getFormattedDuration();
-
-        // then
-        assertThat(duration).isEqualTo("1m 39s 124ms");
     }
 }

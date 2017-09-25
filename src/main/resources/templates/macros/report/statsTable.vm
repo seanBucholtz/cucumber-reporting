@@ -19,43 +19,10 @@
         <td class="total">$item.getSteps()</td>
 
         <td #if ($item.getPassedScenarios() > 0) class="passed"    #end>$item.getPassedScenarios()</td>
-        <td #if ($item.getFailedScenarios() > 0) class="failed"    #end>
-            #if ($item.getFailedScenarios() > 0)
-                <div class="dropup">
-                    <button class="btn btn-danger dropdown-toggle" type="button" id="failed-cause-dropdown"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        $item.getFailedScenarios()
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right"
-                         aria-labelledby="failed-cause-dropdown"
-                         style="max-height: 25vh; overflow-x: hidden;
-                             min-width: 20vw; max-width: 40vw;
-                             background-color: #D3D3D3"
-                    >
-                        #set ($failedCauseList = $item.getFailedCause())
-                        #foreach($failedCauseData in $failedCauseList)
-                            #set ($scenarioName = $failedCauseData[0])
-                            #set ($stepName = $failedCauseData[1])
-                            #set ($stepId = $failedCauseData[2])
-                            #set ($errorMessage = $failedCauseData[3])
-                            <div class="bs-callout bs-callout-danger" style="background-color: white">
-                                <h4>$scenarioName</h4>
-                                <strong>
-                                    <a class="step-name" href="$item.getReportFileName()#$stepId">$stepName</a>
-                                </strong>
-                                <br>
-                                <samp>$errorMessage</samp>
-                            </div>
-                        #end
-                    </div>
-                </div>
-            #else
-                $item.getFailedScenarios()
-            #end
-        </td>
+        <td #if ($item.getFailedScenarios() > 0) class="failed"    #end>$item.getFailedScenarios()</td>
         <td class="total">$item.getScenarios()</td>
 
-        <td class="duration" data-value="$item.getDuration()">$item.getFormattedDuration()</td>
+        <td class="duration" data-value="$item.getDurations()">$item.getFormattedDurations()</td>
         <td class="$item.getStatus().getRawName()">$item.getStatus().getLabel()</td>
       </tr>
     #end
@@ -63,7 +30,7 @@
 
   <tfoot class="total">
     <tr>
-      <td></td>
+      <td>$items.size()</td>
       #if ($parallel)
         <td>-</td>
       #end
@@ -78,8 +45,8 @@
       <td>$report_summary.getFailedScenarios()</td>
       <td>$report_summary.getScenarios()</td>
 
-      <td class="duration">$report_summary.getFormattedDuration()</td>
-      <td>$items.size()</td>
+      <td class="duration">$report_summary.getFormattedDurations()</td>
+      <td></td>
     </tr>
     <tr>
       <td></td>
@@ -96,7 +63,7 @@
       <td>$util.formatAsPercentage($report_summary.getFailedScenarios(), $report_summary.getScenarios())</td>
       <td></td>
       <td></td>
-      <td>$util.formatAsPercentage($report_summary.getPassedFeatures(), $report_summary.getFeatures())</td>
+      <td>$util.formatAsPercentage($report_summary.getFailedScenarios(), $report_summary.getScenarios())</td>
     </tr>
   </tfoot>
 </table>

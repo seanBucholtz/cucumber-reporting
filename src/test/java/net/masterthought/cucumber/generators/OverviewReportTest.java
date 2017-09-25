@@ -160,27 +160,27 @@ public class OverviewReportTest {
         report.incDurationBy(offset);
 
         // then
-        assertThat(report.getDuration()).isEqualTo(RefReport.getDuration() + offset);
+        assertThat(report.getDurations()).isEqualTo(RefReport.getDurations() + offset);
     }
 
     @Test
-    public void getDuration_ReturnsDuration() {
+    public void getDurations_ReturnsDuration() {
 
         // given
         OverviewReport report = buildSampleReport();
 
         // then
-        assertThat(report.getDuration()).isEqualTo(1234567L);
+        assertThat(report.getDurations()).isEqualTo(1234567L);
     }
 
     @Test
-    public void getFormattedDuration_ReturnsFormattedDuration() {
+    public void getFormattedDurations_ReturnsFormattedDuration() {
 
         // given
         OverviewReport report = buildSampleReport();
 
         // then
-        assertThat(report.getFormattedDuration()).isEqualTo("001ms");
+        assertThat(report.getFormattedDurations()).isEqualTo("001ms");
     }
 
     @Test
@@ -214,17 +214,6 @@ public class OverviewReportTest {
         // then
         thrown.expect(NotImplementedException.class);
         report.getStatus();
-    }
-
-    @Test
-    public void getFailedCause_ThrowsException() {
-
-        // given
-        OverviewReport report = buildSampleReport();
-
-        // then
-        thrown.expect(NotImplementedException.class);
-        report.getFailedCause();
     }
 
     private static OverviewReport buildSampleReport() {

@@ -1,32 +1,32 @@
 $(document).ready(function() {
 
     var chartData = {
-        labels: #stringArray($chart_categories),
+        labels: $chart_categories,
         datasets: [
             {
                 label: "Passed",
                 backgroundColor: "#92DD96",
-                data: #numberArray($chart_data[0])
+                data: $chart_data.get(0)
             },
             {
                 label: "Failed",
                 backgroundColor: "#F2928C",
-                data: #numberArray($chart_data[1])
+                data: $chart_data.get(1)
             },
             {
                 label: "Skipped",
                 backgroundColor: "#8AF",
-                data: #numberArray($chart_data[2])
+                data: $chart_data.get(2)
             },
             {
                 label: "Pending",
                 backgroundColor: "#F5F28F",
-                data: #numberArray($chart_data[3])
+                data: $chart_data.get(3)
             },
             {
                 label: "Undefined",
                 backgroundColor: "#F5B975",
-                data: #numberArray($chart_data[4])
+                data: $chart_data.get(4)
             }
         ]
     };

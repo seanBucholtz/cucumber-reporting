@@ -5,15 +5,15 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.Reportable;
-import net.masterthought.cucumber.json.support.Durationable;
 import net.masterthought.cucumber.json.support.Status;
 import net.masterthought.cucumber.json.support.StatusCounter;
 import net.masterthought.cucumber.util.Util;
 
-public class Feature implements Reportable, Durationable {
+public class Feature implements Reportable, Comparable<Feature> {
 
     // Start: attributes from JSON file report
     private final String id = null;
@@ -36,7 +36,7 @@ public class Feature implements Reportable, Durationable {
     private final StatusCounter stepsCounter = new StatusCounter();
 
     private Status featureStatus;
-    private long duration;
+    private long totalDuration;
 
     @Override
     public String getDeviceName() {
@@ -128,13 +128,13 @@ public class Feature implements Reportable, Durationable {
     }
 
     @Override
-    public long getDuration() {
-        return duration;
+    public long getDurations() {
+        return totalDuration;
     }
 
     @Override
-    public String getFormattedDuration() {
-        return Util.formatDuration(duration);
+    public String getFormattedDurations() {
+        return Util.formatDuration(getDurations());
     }
 
     @Override
@@ -153,16 +153,11 @@ public class Feature implements Reportable, Durationable {
 
     /**
      * Sets additional information and calculates values which should be calculated during object creation.
-     * @param jsonFile JSON file name
-     * @param jsonFileNo index of the JSON file
-     * @param configuration configuration for the report
      */
     public void setMetaData(String jsonFile, int jsonFileNo, Configuration configuration) {
         this.jsonFile = jsonFile;
-        // using indexed for-loop versus enhanced for-loop to capture the index value of each element
-        for(int i = 0; i < elements.length; i ++) {
-            Element element = elements[i];
-            element.setIndex(i); // index to be used later when creating IDs for Resultable implementations
+
+        for (Element element : elements) {
             element.setMetaData(this);
 
             if (element.isScenario()) {
@@ -224,11 +219,26 @@ public class Feature implements Reportable, Durationable {
 
             for (Step step : element.getSteps()) {
                 stepsCounter.incrementFor(step.getResult().getStatus());
-                duration += step.getDuration();
+                totalDuration += step.getDuration();
             }
         }
     }
 
     @Override
-    public List<String[]> getFailedCause() { return Util.getFailedCauseList(this.elements); }
+    public int compareTo(Feature feature) {
+        // order by the name so first compare by the name
+        int nameCompare = ObjectUtils.compare(name, feature.getName());
+        if (nameCompare != 0) {
+            return nameCompare;
+        }
+
+        // if names are the same, compare by the ID which should be unieque by JSON file
+        int idCompare = ObjectUtils.compare(id, feature.getId());
+        if (idCompare != 0) {
+            return idCompare;
+        }
+
+        // if ids are the same it means that feature exists in more than one JSON file so compare by JSON report
+        return ObjectUtils.compare(jsonFile, feature.getJsonFile());
+    }
 }

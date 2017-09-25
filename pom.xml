@@ -3,7 +3,7 @@
     <groupId>net.masterthought</groupId>
     <artifactId>cucumber-reporting</artifactId>
     <packaging>jar</packaging>
-    <version>3.10.1-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <name>cucumber-reporting</name>
     <url>https://github.com/damianszczepanik/cucumber-reporting</url>
 
@@ -13,10 +13,8 @@
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
         <maven.compile.encoding>UTF-8</maven.compile.encoding>
 
-        <!-- require log4j 2.6, until 2.8 released with fix for
-             https://issues.apache.org/jira/browse/LOG4J2-1642 -->
-        <log4j.version>2.8.2</log4j.version>
-        <powermock.version>1.7.0</powermock.version>
+        <log4j.version>2.6.2</log4j.version>
+        <powermock.version>1.6.5</powermock.version>
 
         <test.integration.pattern>**/*IntegrationTest*.java</test.integration.pattern>
     </properties>
@@ -43,13 +41,11 @@
         <developerConnection>scm:git:git@github.com:damianszczepanik/cucumber-reporting.git</developerConnection>
         <url>git@github.com:damianszczepanik/cucumber-reporting.git</url>
     </scm>
-    <ciManagement>
-        <system>travis</system>
-        <url>https://travis-ci.org/damianszczepanik/cucumber-reporting</url>
-    </ciManagement>
 
     <description>
-        Provides pretty html reports for Cucumber. It works by generating html from the cucumber json file.
+        Provides pretty html reports for Cucumber (Behaviour-Driven Development). It works by generating html from the
+        cucumber json report formatter. So can be used anywhere a json report is generated. Current use is in the
+        cucumber jenkins plugin and a maven mojo to generate the same report from mvn command line when running locally.
     </description>
 
     <licenses>
@@ -78,7 +74,7 @@
             <activation>
                 <property>
                     <!-- will be set by the release plugin upon performing 
-                         mvn release:clean release:prepare release:perform -->
+                         release:clean release:prepare release:perform -->
                     <name>performRelease</name>
                     <value>true</value>
                 </property>
@@ -116,7 +112,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.5.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
@@ -153,7 +149,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.9</version>
+                <version>0.7.7.201606060606</version>
                 <executions>
                     <execution>
                         <goals>
@@ -172,7 +168,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20</version>
+                <version>2.19.1</version>
                 <configuration>
                     <systemPropertyVariables>
                         <!-- JaCoCo runtime must know where to dump coverage: -->
@@ -187,7 +183,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.20</version>
+                <version>2.19.1</version>
                 <configuration>
                     <includes>
                         <!-- Run only integration tests -->
@@ -220,7 +216,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.8.6</version>
+            <version>2.8.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
@@ -235,12 +231,12 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.9.9</version>
+            <version>2.9.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>1.1</version>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -260,17 +256,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.10.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-            <artifactId>owasp-java-html-sanitizer</artifactId>
-            <version>20170515.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>20.0</version>
+            <version>1.9.2</version>
         </dependency>
         <!-- for testing -->
         <dependency>
@@ -282,7 +268,7 @@
         <dependency>
             <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
-            <version>1.33</version>
+            <version>1.27</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -300,7 +286,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>2.8.0</version>
+            <version>2.3.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

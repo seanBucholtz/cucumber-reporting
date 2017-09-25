@@ -1,13 +1,11 @@
-[![Travis Status](https://img.shields.io/travis/damianszczepanik/cucumber-reporting/master.svg?label=Travis%20bulid)](https://travis-ci.org/damianszczepanik/cucumber-reporting)
-[![AppVeyor Status](https://img.shields.io/appveyor/ci/damianszczepanik/cucumber-reporting/master.svg?label=AppVeyor%20build)](https://ci.appveyor.com/project/damianszczepanik/cucumber-reporting/history)
-[![Shippable Status](https://img.shields.io/shippable/5844689c9d1f3e0f0057631a/master.svg?label=Shippable%20build)](https://app.shippable.com/projects/5844689c9d1f3e0f0057631a)
+[![Build Status](https://img.shields.io/travis/damianszczepanik/cucumber-reporting/master.svg?label=Travis%20bulid)](https://travis-ci.org/damianszczepanik/cucumber-reporting)
+[![Build Status](https://img.shields.io/appveyor/ci/damianszczepanik/cucumber-reporting/master.svg?label=AppVeyor%20build)](https://ci.appveyor.com/project/damianszczepanik/cucumber-reporting/history)
 
 [![Coverage Status](https://img.shields.io/codecov/c/github/damianszczepanik/cucumber-reporting/master.svg?label=Unit%20tests%20coverage)](https://codecov.io/github/damianszczepanik/cucumber-reporting)
-[![Sonarqube coverage](https://sonarqube.com/api/badges/measure?key=com.github.dannil:scb-java-client&metric=coverage)](https://sonarqube.com/component_measures/domain/Coverage?id=net.masterthought%3Acucumber-reporting)
-[![Sonarqube tech debt](https://sonarqube.com/api/badges/measure?key=com.github.dannil:scb-java-client&metric=sqale_debt_ratio)](https://sonarqube.com/component_measures/domain/Maintainability?id=net.masterthought%3Acucumber-reporting)
+[![SonarQube coverage](https://img.shields.io/sonar/http/nemo.sonarqube.org/net.masterthought:cucumber-reporting/coverage.svg?label=UI%20tests%20coverage)](http://nemo.sonarqube.org/overview/coverage?id=net.masterthought%3Acucumber-reporting)
+[![SonarQube tech debt](https://img.shields.io/sonar/http/nemo.sonarqube.org/net.masterthought:cucumber-reporting/tech_debt.svg?label=Sonarqube%20tech%20debt)](http://nemo.sonarqube.org/overview/debt?id=net.masterthought%3Acucumber-reporting)
 [![Coverity](https://scan.coverity.com/projects/6166/badge.svg?label=Coverity%20analysis)](https://scan.coverity.com/projects/damianszczepanik-cucumber-reporting)
 [![Codacy](https://api.codacy.com/project/badge/grade/7f206992ed364f0896490057fdbdaa2e)](https://www.codacy.com/app/damianszczepanik/cucumber-reporting)
-[![Codebeat](https://codebeat.co/badges/cb097d5a-280a-4867-8120-d6f03a874861)](https://codebeat.co/projects/github-com-damianszczepanik-cucumber-reporting)
 [![Maven Dependencies](https://www.versioneye.com/user/projects/55c5301d653762001a0035ed/badge.svg)](https://www.versioneye.com/user/projects/55c5301d653762001a0035ed?child=summary)
 
 [![Maven Central](https://img.shields.io/maven-central/v/net.masterthought/cucumber-reporting.svg)](http://search.maven.org/#search|gav|1|g%3A%22net.masterthought%22%20AND%20a%3A%22cucumber-reporting%22)
@@ -15,14 +13,13 @@
 
 # Publish pretty [cucumber](http://cukes.info/) reports
 
-This is a Java report publisher primarily created to publish cucumber reports on the Jenkins build server.
-It publishes pretty html reports with charts showing the results of cucumber runs. It has been split out into a standalone package so it can be used for Jenkins and maven command line as well as any other packaging that might be useful. Generated report has no dependency so can be viewed offline.
+This is a Java report publisher primarily created to publish cucumber reports on the Jenkins build server. It publishes pretty html reports showing the results of cucumber runs. It has been split out into a standalone package so it can be used for Jenkins and maven command line as well as any other packaging that might be useful.
 
 ## Background
 
 Cucumber is a test automation tool following the principles of Behavioural Driven Design and living documentation. Specifications are written in a concise human readable form and executed in continuous integration.
 
-This project allows you to publish the results of a cucumber run as pretty html reports. In order for this to work you must generate a cucumber json report. The project converts the json report into an overview html linking to separate feature files with stats and results.
+This project allows you to publish the results of a cucumber run as pretty html reports. In order for this to work you must generate a cucumber json report. The project converts the json report into an overview html linking to separate feature file htmls with stats and results.
 
 ## Install
 
@@ -35,7 +32,8 @@ Add a maven dependency to your pom
 </dependency>
 ```
 
-Read this if you need further [detailed install and configuration](https://github.com/jenkinsci/cucumber-reports-plugin/wiki/Detailed-Configuration) instructions for using the Jenkins version of this project
+Read this if you need further [detailed install and configuration]
+(https://github.com/jenkinsci/cucumber-reports-plugin/wiki/Detailed-Configuration) instructions for using the Jenkins version of this project
 
 ## Usage
 ```Java
@@ -44,47 +42,53 @@ List<String> jsonFiles = new ArrayList<>();
 jsonFiles.add("cucumber-report-1.json");
 jsonFiles.add("cucumber-report-2.json");
 
+String jenkinsBasePath = "";
 String buildNumber = "1";
-String projectName = "cucumberProject";
+String projectName = "cucumber-jvm";
+boolean skippedFails = true;
+boolean pendingFails = false;
+boolean undefinedFails = true;
 boolean runWithJenkins = false;
 boolean parallelTesting = false;
 
 Configuration configuration = new Configuration(reportOutputDirectory, projectName);
-// optional configuration
+// optionally only if you need
+configuration.setStatusFlags(skippedFails, pendingFails, undefinedFails);
 configuration.setParallelTesting(parallelTesting);
+configuration.setJenkinsBasePath(jenkinsBasePath);
 configuration.setRunWithJenkins(runWithJenkins);
 configuration.setBuildNumber(buildNumber);
-// addidtional metadata presented on main page
-configuration.addClassifications("Platform", "Windows");
-configuration.addClassifications("Browser", "Firefox");
-configuration.addClassifications("Branch", "release/1.0");
 
 ReportBuilder reportBuilder = new ReportBuilder(jsonFiles, configuration);
-Reportable result = reportBuilder.generateReports();
-// and here validate 'result' to decide what to do
-// if report has failed features, undefined steps etc
+reportBuilder.generateReports();
 ```
+`skippedFails` means the build will be failed if any steps are in skipped status and similar happens for other flags. This only applies when running with Jenkins.
+runWithJenkins means put in the links back to Jenkins in the report.
+
 There is a feature overview page:
 
-![feature overview page](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-overview.png)
+![feature overview page]
+(https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-overview.png)
 
 And there are also feature specific results pages:
 
-![feature specific page passing](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-passed.png)
+![feature specific page passing]
+(https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-passed.png)
 
 And useful information for failures:
 
-![feature specific page passing](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-failed.png)
+![feature specific page passing]
+(https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-failed.png)
 
 If you have tags in your cucumber features you can see a tag overview:
 
-![Tag overview](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-overview.png)
+![Tag overview]
+(https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-overview.png)
 
 And you can drill down into tag specific reports:
 
-![Tag report](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-report.png)
-
-![Trends report](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/trends.png)
+![Tag report]
+(https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/report-tag.png)
 
 
 ## Code quality
@@ -96,4 +100,5 @@ Once you developed your new feature or improvement you should test it by providi
 
 ## Contribution
 
-Interested in contributing to the cucumber-reporting?  Great!  Start [here](https://github.com/damianszczepanik/cucumber-reporting).
+Interested in contributing to the cucumber-reporting?  Great!  Start [here]
+(https://github.com/damianszczepanik/cucumber-reporting).

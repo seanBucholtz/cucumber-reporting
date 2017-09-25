@@ -19,10 +19,9 @@ public class FeaturesOverviewPage extends AbstractPage {
 
     @Override
     public void prepareReport() {
-        context.put("all_features", reportResult.getAllFeatures());
-        context.put("report_summary", reportResult.getFeatureReport());
+        context.put("all_features", report.getAllFeatures());
+        context.put("report_summary", report.getFeatureReport());
 
-        context.put("classifications", configuration.getClassifications());
         context.put("parallel", configuration.isParallelTesting());
     }
 }

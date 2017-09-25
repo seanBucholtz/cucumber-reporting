@@ -3,15 +3,11 @@ package net.masterthought.cucumber.json;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import mockit.Deencapsulation;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import net.masterthought.cucumber.generators.integrations.PageTest;
 import net.masterthought.cucumber.json.support.Status;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Damian Szczepanik (damianszczepanik@github)
@@ -60,7 +56,7 @@ public class FeatureTest extends PageTest {
 
         // then
         assertThat(elements).hasSize(2);
-        assertThat(elements[0].getName()).isEqualTo("Activate Credit Card");
+        assertThat(elements[0].getEscapedName()).isEqualTo("Activate Credit Card");
     }
 
     @Test
@@ -213,7 +209,7 @@ public class FeatureTest extends PageTest {
 
         // then
         assertThat(feature.getPassedScenarios()).isEqualTo(1);
-        assertThat(feature.getFailedScenarios()).isEqualTo(2);
+        assertThat(feature.getFailedScenarios()).isEqualTo(1);
     }
 
     @Test
@@ -242,7 +238,7 @@ public class FeatureTest extends PageTest {
         assertThat(feature2.getFailedSteps()).isEqualTo(1);
         assertThat(feature2.getSkippedSteps()).isEqualTo(2);
         assertThat(feature2.getPendingSteps()).isEqualTo(1);
-        assertThat(feature2.getUndefinedSteps()).isEqualTo(3);
+        assertThat(feature2.getUndefinedSteps()).isEqualTo(2);
     }
 
     @Test
@@ -252,20 +248,20 @@ public class FeatureTest extends PageTest {
         Feature feature = features.get(0);
 
         // when
-        long duration = feature.getDuration();
+        long duration = feature.getDurations();
 
         // then
         assertThat(duration).isEqualTo(99263122889L);
     }
 
     @Test
-    public void getFormattedDuration_ReturnsFormattedDuration() {
+    public void getFormattedDurations_ReturnsFormattedDurations() {
 
         // given
         Feature feature = features.get(1);
 
         // when
-        String formattedDuration = feature.getFormattedDuration();
+        String formattedDuration = feature.getFormattedDurations();
 
         // then
         assertThat(formattedDuration).isEqualTo("092ms");
@@ -315,37 +311,53 @@ public class FeatureTest extends PageTest {
     }
 
     @Test
-    public void getFailedCause_ReturnsFailuresList() {
-        List<String[]> expectedFailedScenariosList = new ArrayList<>(2);
-        String expectedFailedScenarioName = "Account may not have sufficient funds";
-        String expectedFailedStepResultErrorMessage = "Error message not found.";
-        expectedFailedScenariosList.add(new String[]{
-                expectedFailedScenarioName,
-                "MachineFactory.wait()",
-                "0-hook-1500995314",
-                expectedFailedStepResultErrorMessage
-        });
-        expectedFailedScenariosList.add(new String[]{
-                expectedFailedScenarioName,
-                "the card is valid",
-                "0-step-15",
-                expectedFailedStepResultErrorMessage
-        });
+    public void compareTo_OnSameFeature_ReturnsZero() {
 
         // given
-        Feature failedFeature = features.get(1);
-        List<String[]> returnedFailedScenariosList = failedFeature.getFailedCause();
+        Feature feature1 = features.get(0);
+        Feature feature2 = features.get(0);
 
-        // first validate that both expected and returned maps are the same size
-        Assert.assertEquals(returnedFailedScenariosList.size(), expectedFailedScenariosList.size());
+        // when
+        int result = feature1.compareTo(feature2);
 
-        String[][] expectedFailedScenariosListArr = new String[expectedFailedScenariosList.size()][2];
-        expectedFailedScenariosList.toArray(expectedFailedScenariosListArr);
+        // then
+        assertThat(result).isZero();
+    }
 
-        String[][] returnedFailedScenariosListArr = new String[returnedFailedScenariosList.size()][2];
-        returnedFailedScenariosList.toArray(returnedFailedScenariosListArr);
+    @Test
+    public void compareTo_OnSameName_ReturnsNotZero() {
 
-        // finally validate that the expected and returned map values are equal
-        Assert.assertArrayEquals(expectedFailedScenariosListArr, returnedFailedScenariosListArr);
+        // given
+        Feature feature1 = features.get(0);
+        Feature feature2 = buildFeature(feature1.getName(), "myId", "myFile.json");
+
+        // then
+        int result = feature1.compareTo(feature2);
+
+        // then
+        assertThat(result).isEqualTo(feature1.getId().compareTo(feature2.getId()));
+    }
+
+    @Test
+    public void compareTo_OnSameIDAndName_ReturnsNotZero() {
+
+        // given
+        Feature feature1 = features.get(0);
+        Feature feature2 = buildFeature(feature1.getName(), feature1.getId(), "myFile.json");
+
+        // then
+        int result = feature1.compareTo(feature2);
+
+        // then
+        assertThat(result).isEqualTo(feature1.getJsonFile().compareTo(feature2.getJsonFile()));
+    }
+
+    private static Feature buildFeature(final String name, final String id, final String jsonFile) {
+        Feature feature = new Feature();
+        Deencapsulation.setField(feature, "name", name);
+        Deencapsulation.setField(feature, "id", id);
+        Deencapsulation.setField(feature, "jsonFile", jsonFile);
+
+        return feature;
     }
 }

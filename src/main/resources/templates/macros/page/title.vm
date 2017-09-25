@@ -1,9 +1,9 @@
 #macro(includeTitle, $reportName)
 
 #set($buildNo = "")
-#if($build_number)
+#if($jenkins_source)
   #set($buildNo = "(no $build_number)")
 #end
-<title>Cucumber Reports $buildNo - $reportName</title>
+<title>Cucumber-JVM Reports $buildNo - $reportName</title>
 
 #end

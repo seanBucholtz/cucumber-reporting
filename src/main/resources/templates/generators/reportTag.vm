@@ -8,13 +8,12 @@
 
 #includeNavigation()
 
-#includeReportInfo()
+#includeBuildInfo()
 
 #includeLead("Tag Report")
 
 #includeReportTable("Tag", $tag, false)
 
-#includeExpandingButtons()
 
 <div class="container-fluid" id="report">
   <div class="row">
@@ -29,8 +28,6 @@
     </div>
   </div>
 </div>
-
-#includeExpandingButtons()
 <br>
 
 #include("/templates/footer.vm")

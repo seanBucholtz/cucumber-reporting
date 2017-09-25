@@ -42,30 +42,17 @@ public class StatusCounter {
         }
     }
 
-    /**
-     * Gets the number of occurrences for given status.
-     *
-     * @param status the status
-     * @return number of occurrences for given status
-     */
+    /** Gets the counter for given finalStatus. */
     public int getValueFor(Status status) {
         return this.counter.get(status);
     }
 
-    /**
-     * Gets the sum of all occurrences for all statuses.
-     *
-     * @return sum of all occurrences for all statuses
-     */
+    /** Returns sum of all occurrences for all statuses. */
     public int size() {
         return size;
     }
 
-    /**
-     * If statuses for all items are the same then this finalStatus is returned, otherwise {@link Status#FAILED}.
-     *
-     * @return final status for this counter
-     */
+    /** If statuses for all items are the same then this finalStatus is returned, otherwise {@link Status#FAILED}. */
     public Status getFinalStatus() {
         return finalStatus;
     }

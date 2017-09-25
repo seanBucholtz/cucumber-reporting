@@ -34,7 +34,7 @@ public class FeatureReportPageTest extends PageTest {
     }
 
     @Test
-    public void prepareReport_AddsCustomProperties() {
+    public void prepareReportAddsCustomProperties() {
 
         // given
         Feature feature = features.get(1);
@@ -45,7 +45,7 @@ public class FeatureReportPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(9);
+        assertThat(context.getKeys()).hasSize(10);
         assertThat(context.get("parallel")).isEqualTo(configuration.isParallelTesting());
         assertThat(context.get("feature")).isEqualTo(feature);
     }

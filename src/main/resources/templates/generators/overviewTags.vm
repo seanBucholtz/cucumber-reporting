@@ -5,14 +5,14 @@
   #includeTitle("Tags Overview")
 
   <script type="text/javascript">
-  #parse("/templates/js/tags-chart.js.vm")
+  #parse("/templates/js/tags-chart.js")
   </script>
 </head>
 <body>
 
 #includeNavigation("tags")
 
-#includeReportInfo()
+#includeBuildInfo()
 
 #includeLead("Tags Statistics", "The following graph shows passing and failing statistics for tags")
 
@@ -28,7 +28,7 @@
 #end
 
 <br>
-<div class="container-fluid" id="report">
+<div class="container-fluid" id="summary">
   <div class="row">
     <div class="col-md-10 col-md-offset-1">
       #if($all_tags.isEmpty())

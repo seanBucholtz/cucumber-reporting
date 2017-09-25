@@ -13,7 +13,7 @@ import net.masterthought.cucumber.json.Step;
 import net.masterthought.cucumber.json.Tag;
 import net.masterthought.cucumber.util.Util;
 
-public class TagObject implements Reportable {
+public class TagObject implements Reportable, Comparable<TagObject> {
 
     private final String tagName;
     private final List<Element> elements = new ArrayList<>();
@@ -102,13 +102,13 @@ public class TagObject implements Reportable {
     }
 
     @Override
-    public long getDuration() {
+    public long getDurations() {
         return totalDuration;
     }
 
     @Override
-    public String getFormattedDuration() {
-        return Util.formatDuration(getDuration());
+    public String getFormattedDurations() {
+        return Util.formatDuration(getDurations());
     }
 
     @Override
@@ -150,11 +150,6 @@ public class TagObject implements Reportable {
         return status;
     }
 
-    @Override
-    public List<String[]> getFailedCause() {
-        return Util.getFailedCauseList(this.elements.toArray(new Element[this.elements.size()]));
-    }
-
     public String getRawStatus() {
         return status.name().toLowerCase();
     }
@@ -162,5 +157,11 @@ public class TagObject implements Reportable {
     @Override
     public String getDeviceName() {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public int compareTo(TagObject o) {
+        // since there might be the only one TagObject with given tagName, compare by location only
+        return Integer.signum(tagName.compareTo(o.getName()));
     }
 }

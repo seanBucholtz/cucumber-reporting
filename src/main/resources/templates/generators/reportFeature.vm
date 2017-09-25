@@ -8,13 +8,12 @@
 
 #includeNavigation()
 
-#includeReportInfo()
+#includeBuildInfo()
 
 #includeLead("Feature Report")
 
 #includeReportTable("Feature", $feature, $parallel)
 
-#includeExpandingButtons()
 
 <div class="container-fluid" id="report">
   <div class="row">
@@ -34,8 +33,6 @@
     </div>
   </div>
 </div>
-
-#includeExpandingButtons()
 <br>
 
 #include("/templates/footer.vm")

@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -39,6 +39,36 @@ public class ConfigurationTest {
     }
 
     @Test
+    public void getJenkinsBasePath_OnSampleBath_ReturnsJenkinsPath() {
+
+        // given
+        Configuration configuration = new Configuration(outputDirectory, projectName);
+        String basePath = "abc321";
+        configuration.setJenkinsBasePath(basePath);
+
+        // when
+        String path = configuration.getJenkinsBasePath();
+
+        // then
+        assertThat(path).isEqualTo(basePath);
+    }
+
+    @Test
+    public void getJenkinsBasePath_OnEmptyPath_ReturnsJenkinsPath() {
+
+        // given
+        Configuration configuration = new Configuration(outputDirectory, projectName);
+        String basePath = StringUtils.EMPTY;
+        configuration.setJenkinsBasePath(basePath);
+
+        // when
+        String path = configuration.getJenkinsBasePath();
+
+        // then
+        assertThat(path).isEmpty();
+    }
+
+    @Test
     public void isRunWithJenkins_ReturnsRunWithJenkins() {
 
         // given
@@ -64,48 +94,6 @@ public class ConfigurationTest {
 
         // then
         assertThat(dir).isEqualTo(outputDirectory);
-    }
-
-    @Test
-    public void getTrendsStatsFile_ReturnsTrendsFile() {
-
-        // given
-        File file = new File("ble");
-        Configuration configuration = new Configuration(outputDirectory, projectName);
-
-        // when
-        configuration.setTrendsStatsFile(file);
-
-        // then
-        assertThat(configuration.getTrendsStatsFile()).isEqualTo(file);
-    }
-
-    @Test
-    public void isTrendsStatsFile_ChecksIfTrendsFileWasSet() {
-
-        // given
-        File file = new File("ble");
-        Configuration configuration = new Configuration(outputDirectory, projectName);
-
-        // when
-        configuration.setTrendsStatsFile(file);
-
-        // then
-        assertThat(configuration.isTrendsStatsFile()).isTrue();
-    }
-
-    @Test
-    public void getTrendsLimit_ReturnsLimitForTrends() {
-
-        // given
-        final int limit = 123;
-        Configuration configuration = new Configuration(outputDirectory, projectName);
-
-        // when
-        configuration.setTrends(null, limit);
-
-        // then
-        assertThat(configuration.getTrendsLimit()).isEqualTo(limit);
     }
 
     @Test
@@ -174,23 +162,5 @@ public class ConfigurationTest {
         // then
         thrown.expect(ValidationException.class);
         configuration.setTagsToExcludeFromChart("\\invalid.regex\\");
-    }
-
-    @Test
-    public void addClassifications_AddsClassification() {
-
-        // given
-        Configuration configuration = new Configuration(outputDirectory, projectName);
-        final String classificationName = "Browser";
-        final String classificationValue = "Firefox 1.0";
-
-        // when
-        configuration.addClassifications(classificationName, classificationValue);
-
-        // then
-        assertThat(configuration.getClassifications()).hasSize(1);
-        Map.Entry<String, String> classification = configuration.getClassifications().get(0);
-        assertThat(classification.getKey()).isEqualTo(classificationName);
-        assertThat(classification.getValue()).isEqualTo(classificationValue);
     }
 }

@@ -25,13 +25,13 @@ public class StepsOverviewPage extends AbstractPage {
 
     @Override
     public void prepareReport() {
-        context.put("all_steps", reportResult.getAllSteps());
+        context.put("all_steps", report.getAllSteps());
 
         int allOccurrences = 0;
         long allDurations = 0;
-        for (StepObject stepObject : reportResult.getAllSteps()) {
+        for (StepObject stepObject : report.getAllSteps()) {
             allOccurrences += stepObject.getTotalOccurrences();
-            allDurations += stepObject.getDuration();
+            allDurations += stepObject.getDurations();
         }
         context.put("all_occurrences", allOccurrences);
         context.put("all_durations", Util.formatDuration(allDurations));

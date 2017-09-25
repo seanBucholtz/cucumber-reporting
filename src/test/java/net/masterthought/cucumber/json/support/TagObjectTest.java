@@ -2,10 +2,9 @@ package net.masterthought.cucumber.json.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.*;
+import java.util.Arrays;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -104,7 +103,7 @@ public class TagObjectTest extends PageTest {
     }
 
     @Test
-    public void getFailedFeatures_ThrowsException() {
+    public void getFAiledFeatures_ThrowsException() {
 
         // given
         TagObject tag = new TagObject("@checkout");
@@ -163,7 +162,7 @@ public class TagObjectTest extends PageTest {
     }
 
     @Test
-    public void getDuration_ReturnsDuration() {
+    public void getDurations_ReturnsDurations() {
 
         // given
         TagObject tag = new TagObject("@checkout");
@@ -175,8 +174,8 @@ public class TagObjectTest extends PageTest {
         }
 
         // then
-        assertThat(tag.getDuration()).isEqualTo(99263122889L);
-        assertThat(tag.getFormattedDuration()).isEqualTo("1m 39s 263ms");
+        assertThat(tag.getDurations()).isEqualTo(99263122889L);
+        assertThat(tag.getFormattedDurations()).isEqualTo("1m 39s 263ms");
     }
 
     @Test
@@ -255,44 +254,30 @@ public class TagObjectTest extends PageTest {
     }
 
     @Test
-    public void getFailedCause_ReturnsFailuresList() {
-        List<String[]> expectedFailedScenariosList = new ArrayList<>(2);
-        String expectedFailedScenarioName = "Account may not have sufficient funds";
-        String expectedFailedStepResultErrorMessage = "Error message not found.";
-        expectedFailedScenariosList.add(new String[]{
-                expectedFailedScenarioName,
-                "MachineFactory.wait()",
-                "0-hook-1500995314",
-                expectedFailedStepResultErrorMessage
-        });
-        expectedFailedScenariosList.add(new String[]{
-                expectedFailedScenarioName,
-                "the card is valid",
-                "0-step-15",
-                expectedFailedStepResultErrorMessage
-        });
+    public void compareTo_OnDifferentTagName_ReturnsNoneZero() {
 
         // given
-        TagObject failedTag = new TagObject("@checkout");
-        Element[] elements = this.features.get(1).getElements();
+        TagObject tag1 = new TagObject("one");
+        TagObject tag2 = new TagObject("two");
 
         // when
-        for (Element element : elements) {
-            failedTag.addElement(element);
-        }
+        int result = tag1.compareTo(tag2);
 
-        List<String[]> returnedFailedScenariosList = failedTag.getFailedCause();
+        // then
+        assertThat(result).isNotEqualTo(0);
+    }
 
-        // first validate that both expected and returned lists are the same size
-        Assert.assertEquals(expectedFailedScenariosList.size(), returnedFailedScenariosList.size());
+    @Test
+    public void compareTo_OnSameLocation_ReturnsZero() {
 
-        String[][] expectedFailedScenariosListArr = new String[expectedFailedScenariosList.size()][2];
-        expectedFailedScenariosList.toArray(expectedFailedScenariosListArr);
+        // given
+        TagObject tag1 = new TagObject("one");
+        TagObject tag2 = new TagObject("one");
 
-        String[][] returnedFailedScenariosListArr = new String[returnedFailedScenariosList.size()][2];
-        returnedFailedScenariosList.toArray(returnedFailedScenariosListArr);
+        // when
+        int result = tag1.compareTo(tag2);
 
-        // finally validate that the expected and returned map values are equal
-        Assert.assertArrayEquals(returnedFailedScenariosListArr, expectedFailedScenariosListArr);
+        // then
+        assertThat(result).isEqualTo(0);
     }
 }

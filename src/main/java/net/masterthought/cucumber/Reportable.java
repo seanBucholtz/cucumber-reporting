@@ -2,8 +2,6 @@ package net.masterthought.cucumber;
 
 import net.masterthought.cucumber.json.support.Status;
 
-import java.util.List;
-
 /**
  * Defines methods required to generate single report. Implementations of this interface are used by Velocity template.
  *
@@ -54,14 +52,11 @@ public interface Reportable {
     int getPendingSteps();
 
     /** Returns duration as milliseconds for this element. */
-    long getDuration();
+    long getDurations();
 
     /** Returns formatted duration for this element. */
-    String getFormattedDuration();
+    String getFormattedDurations();
 
     /** Returns status for this element. */
     Status getStatus();
-
-    /** Returns Map containing scenario names with the corresponding failed step and error messages for this element. */
-    List<String[]> getFailedCause();
 }

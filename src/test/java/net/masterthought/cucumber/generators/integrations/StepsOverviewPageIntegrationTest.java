@@ -22,7 +22,7 @@ public class StepsOverviewPageIntegrationTest extends PageTest {
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber("333");
         page = new StepsOverviewPage(reportResult, configuration);
-        final String titleValue = String.format("Cucumber Reports (no %s) - Steps Overview",
+        final String titleValue = String.format("Cucumber-JVM Reports (no %s) - Steps Overview",
                 configuration.getBuildNumber());
 
         // when
@@ -67,7 +67,7 @@ public class StepsOverviewPageIntegrationTest extends PageTest {
 
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
-        TableRowAssertion[] headerRows = document.getReport().getTableStats().getHeaderRows();
+        TableRowAssertion[] headerRows = document.getSummary().getTableStats().getHeaderRows();
 
         assertThat(headerRows).hasSize(1);
 
@@ -87,7 +87,7 @@ public class StepsOverviewPageIntegrationTest extends PageTest {
 
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
-        TableRowAssertion[] bodyRows = document.getReport().getTableStats().getBodyRows();
+        TableRowAssertion[] bodyRows = document.getSummary().getTableStats().getBodyRows();
 
         assertThat(bodyRows).hasSameSizeAs(steps);
 
@@ -113,7 +113,7 @@ public class StepsOverviewPageIntegrationTest extends PageTest {
 
         // then
         DocumentAssertion document = documentFrom(page.getWebPage());
-        TableRowAssertion footerCells = document.getReport().getTableStats().getFooterRow();
+        TableRowAssertion footerCells = document.getSummary().getTableStats().getFooterRow();
 
         footerCells.hasExactValues("16", "23", "1m 39s 492ms", "4s 325ms", "Totals");
     }
